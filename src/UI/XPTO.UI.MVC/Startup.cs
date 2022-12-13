@@ -24,6 +24,7 @@ namespace XPTO.UI.MVC
 
         public void ConfigureServices(IServiceCollection services)
         {
+            services.AddInMemoryDatabaseConfiguration();
             services.AddMvcConfiguration();
             services.ResolveDependencies();
         }

@@ -1,50 +1,63 @@
-﻿using System.Linq.Expressions;
+﻿using Microsoft.EntityFrameworkCore;
+using System.Linq.Expressions;
 using XPTO.Core.Data;
 using XPTO.Core.DomainObjects;
+using XPTO.Data.Context;
 
 namespace XPTO.Data.Repositories
 {
     public abstract class Repository<TEntity> : IRepository<TEntity> where TEntity : Entity, new()
-    {        
+    {
+        protected readonly AppDbContext Context;
+        protected readonly DbSet<TEntity> DbSet;
 
-        public Task<IEnumerable<TEntity>> Buscar(Expression<Func<TEntity, bool>> predicate)
+        protected Repository(AppDbContext ctx)
         {
-            throw new NotImplementedException();
+            Context = ctx;
+            DbSet = ctx.Set<TEntity>();
+        }
+
+        public async Task<IEnumerable<TEntity>> Buscar(Expression<Func<TEntity, bool>> predicado)
+        {
+            return await DbSet.AsNoTracking().Where(predicado).ToListAsync();
         }        
 
-        public Task<TEntity> ObterPorId(Guid id)
+        public async Task<TEntity> ObterPorId(Guid id)
         {
-            throw new NotImplementedException();
+            return await DbSet.FindAsync(id);
         }
 
-        public Task<List<TEntity>> ObterTodos()
+        public async Task<List<TEntity>> ObterTodos()
         {
-            throw new NotImplementedException();
+            return await DbSet.ToListAsync();
         }
 
-        public Task Adicionar(TEntity entity)
+        public async Task Adicionar(TEntity entity)
         {
-            throw new NotImplementedException();
+            DbSet.Add(entity);
+            await SaveChanges();
         }
 
-        public Task Atualizar(TEntity entity)
+        public async Task Atualizar(TEntity entity)
         {
-            throw new NotImplementedException();
+            DbSet.Update(entity);
+            await SaveChanges();
         }
 
-        public Task Remover(Guid id)
+        public async Task Remover(Guid id)
         {
-            throw new NotImplementedException();
+            DbSet.Remove(new TEntity { Id = id });
+            await SaveChanges();
         }
 
-        public Task<int> SaveChanges()
+        public async Task<int> SaveChanges()
         {
-            throw new NotImplementedException();
+            return await Context.SaveChangesAsync();
         }
 
         public void Dispose()
         {
-            throw new NotImplementedException();
+            Context?.Dispose();
         }
     }
 }
