@@ -1,13 +1,14 @@
-﻿using XPTO.Domain.Entities;
+﻿using XPTO.Crosscutting.Bereaus.Interfaces;
+using XPTO.Domain.Entities;
 using XPTO.Domain.Interfaces.Services;
 
 namespace XPTO.Service
 {
     public class ReceitaFederalService : IConsultaService
     {
-        private readonly IReceitaFederalService _rf;
+        private readonly IReceitaFederalFacade _rf;
 
-        public ReceitaFederalService(IReceitaFederalService rf)
+        public ReceitaFederalService(IReceitaFederalFacade rf)
         {
             _rf = rf;
         }

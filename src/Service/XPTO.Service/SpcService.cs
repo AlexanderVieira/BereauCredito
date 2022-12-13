@@ -1,13 +1,14 @@
-﻿using XPTO.Domain.Entities;
+﻿using XPTO.Crosscutting.Bereaus.Interfaces;
+using XPTO.Domain.Entities;
 using XPTO.Domain.Interfaces.Services;
 
 namespace XPTO.Service
 {
     public class SpcService : IConsultaService
     {
-        private readonly ISpcService _spc;
+        private readonly ISpcFacade _spc;
 
-        public SpcService(ISpcService spc)
+        public SpcService(ISpcFacade spc)
         {
             _spc = spc;
         }

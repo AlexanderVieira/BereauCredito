@@ -1,13 +1,14 @@
-﻿using XPTO.Domain.Entities;
+﻿using XPTO.Crosscutting.Bereaus.Interfaces;
+using XPTO.Domain.Entities;
 using XPTO.Domain.Interfaces.Services;
 
 namespace XPTO.Service
 {
     public class SerasaService : IConsultaService
     {
-        private readonly ISerasaService _serasa;
+        private readonly ISerasaFacade _serasa;
 
-        public SerasaService(ISerasaService serasa)
+        public SerasaService(ISerasaFacade serasa)
         {
             _serasa = serasa;
         }

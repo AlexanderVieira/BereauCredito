@@ -4,7 +4,7 @@ using XPTO.Core.DomainObjects;
 
 namespace XPTO.Data.Repositories
 {
-    public class Repository<TEntity> : IRepository<TEntity> where TEntity : Entity, new()
+    public abstract class Repository<TEntity> : IRepository<TEntity> where TEntity : Entity, new()
     {        
 
         public Task<IEnumerable<TEntity>> Buscar(Expression<Func<TEntity, bool>> predicate)
