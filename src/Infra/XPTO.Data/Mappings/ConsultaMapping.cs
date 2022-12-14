@@ -4,9 +4,9 @@ using XPTO.Domain.Entities;
 
 namespace XPTO.Data.Mappings
 {
-    public class UsuarioMapping : IEntityTypeConfiguration<Usuario>
+    public class ConsultaMapping : IEntityTypeConfiguration<Consulta>
     {
-        public void Configure(EntityTypeBuilder<Usuario> builder)
+        public void Configure(EntityTypeBuilder<Consulta> builder)
         {
             builder.HasKey(u => u.Id);
 
@@ -20,13 +20,14 @@ namespace XPTO.Data.Mappings
                 tf.Property(u => u.Valor)
                 .IsRequired()
                 .HasColumnName("Senha")
-                .HasColumnType("varchar(8)");
+                .HasColumnType($"varchar(8)");
             });
 
-            builder.HasMany(u => u.Operacoes)
-                .WithMany(o => o.Usuarios);
+            builder.HasOne(c => c.PlanoTarifacao)
+                .WithMany(p => p.Consultas)
+                .HasForeignKey(c => c.PlanoTarifacaoId);
 
-            builder.ToTable("Usuarios");
+            builder.ToTable("Consultas");
         }
     }
 }

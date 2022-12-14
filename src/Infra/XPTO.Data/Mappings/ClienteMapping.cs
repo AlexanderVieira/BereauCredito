@@ -14,7 +14,7 @@ namespace XPTO.Data.Mappings
             builder.OwnsOne(c => c.Nome, tf => 
             { 
                 tf.Property(c => c.NomeCompleto)
-                .IsRequired()
+                .IsRequired()                
                 .HasColumnName("Nome")
                 .HasColumnType("varchar(100)"); 
             });
@@ -22,7 +22,7 @@ namespace XPTO.Data.Mappings
             builder.OwnsOne(c => c.Cnpj, tf => 
             { 
                 tf.Property(c => c.Numero)
-                .IsRequired()
+                .IsRequired()                
                 .HasColumnName("Cnpj")
                 .HasColumnType($"varchar({Cnpj.CNPJ_MAX_LENGTH})"); 
             });
