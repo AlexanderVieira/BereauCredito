@@ -12,5 +12,6 @@ namespace XPTO.Core.Data
         Task Atualizar(TEntity entity);
         Task Remover(Guid id);        
         Task<int> SaveChanges();
+        void ObterPorId();
     }
 }
