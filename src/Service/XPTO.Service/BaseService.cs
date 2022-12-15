@@ -1,49 +1,57 @@
 ﻿using System.Linq.Expressions;
 using XPTO.Core;
+using XPTO.Core.Data;
 using XPTO.Core.DomainObjects;
 
 namespace XPTO.Service
 {
-    public abstract class BaseService<TEntity> : IService<TEntity> where TEntity : Entity, new()
+    public class BaseService<TEntity> : IService<TEntity> where TEntity : Entity, new()
     {
-        public Task Adicionar(TEntity entity)
+        private readonly IRepository<TEntity> _repo;
+
+        protected BaseService(IRepository<TEntity> repo)
         {
-            throw new NotImplementedException();
+            _repo = repo;
         }
 
-        public Task Atualizar(TEntity entity)
+        public async Task Adicionar(TEntity entity)
         {
-            throw new NotImplementedException();
+            await _repo.Adicionar(entity);
         }
 
-        public Task<IEnumerable<TEntity>> Buscar(Expression<Func<TEntity, bool>> predicate)
+        public async Task Atualizar(TEntity entity)
         {
-            throw new NotImplementedException();
+            await _repo.Atualizar(entity);
+        }
+
+        public async Task<IEnumerable<TEntity>> Buscar(Expression<Func<TEntity, bool>> predicate)
+        {
+            return await _repo.Buscar(predicate);
         }
 
         public void Dispose()
         {
-            throw new NotImplementedException();
+            _repo?.Dispose();
         }
 
-        public Task<TEntity> ObterPorId(Guid id)
+        public async Task<TEntity> ObterPorId(Guid id)
         {
-            throw new NotImplementedException();
+            return await _repo.ObterPorId(id);
         }
 
-        public Task<List<TEntity>> ObterTodos()
+        public async Task<List<TEntity>> ObterTodos()
         {
-            throw new NotImplementedException();
+            return await _repo.ObterTodos();
         }
 
-        public Task Remover(Guid id)
+        public async Task Remover(Guid id)
         {
-            throw new NotImplementedException();
+            await _repo.Remover(id);
         }
 
-        public Task<int> SaveChanges()
+        public async Task<int> SaveChanges()
         {
-            throw new NotImplementedException();
+            return await _repo.SaveChanges();
         }
     }
 }

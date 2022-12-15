@@ -19,6 +19,7 @@
 
   <ItemGroup>
     <ProjectReference Include="..\..\Infra\XPTO.Data\XPTO.Data.csproj" />
+    <ProjectReference Include="..\..\Service\XPTO.Service\XPTO.Domain.Service.csproj" />
   </ItemGroup>
 
 </Project>
