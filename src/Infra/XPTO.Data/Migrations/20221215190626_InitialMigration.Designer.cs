@@ -12,8 +12,8 @@ using XPTO.Data.Context;
 namespace XPTO.Data.Migrations
 {
     [DbContext(typeof(AppDbContext))]
-    [Migration("20221214203608_InicialSetup")]
-    partial class InicialSetup
+    [Migration("20221215190626_InitialMigration")]
+    partial class InitialMigration
     {
         /// <inheritdoc />
         protected override void BuildTargetModel(ModelBuilder modelBuilder)
@@ -61,9 +61,14 @@ namespace XPTO.Data.Migrations
                         .ValueGeneratedOnAdd()
                         .HasColumnType("uniqueidentifier");
 
+                    b.Property<string>("Nome")
+                        .IsRequired()
+                        .HasColumnType("varchar(100)")
+                        .HasColumnName("Nome");
+
                     b.HasKey("Id");
 
-                    b.ToTable("Clientes", (string)null);
+                    b.ToTable("Cliente", (string)null);
                 });
 
             modelBuilder.Entity("XPTO.Domain.Entities.Consulta", b =>
@@ -71,6 +76,10 @@ namespace XPTO.Data.Migrations
                     b.Property<Guid>("Id")
                         .ValueGeneratedOnAdd()
                         .HasColumnType("uniqueidentifier");
+
+                    b.Property<Guid?>("ContratoId")
+                        .HasColumnType("uniqueidentifier")
+                        .HasColumnName("Contrato");
 
                     b.Property<Guid>("FornecedorId")
                         .HasColumnType("uniqueidentifier");
@@ -85,45 +94,24 @@ namespace XPTO.Data.Migrations
 
                     b.HasKey("Id");
 
+                    b.HasIndex("ContratoId")
+                        .IsUnique()
+                        .HasFilter("[Contrato] IS NOT NULL");
+
                     b.HasIndex("FornecedorId");
 
                     b.HasIndex("PlanoTarifacaoId");
 
-                    b.ToTable("Consultas", (string)null);
-                });
-
-            modelBuilder.Entity("XPTO.Domain.Entities.ConsultaFornecedor", b =>
-                {
-                    b.Property<Guid>("Id")
-                        .ValueGeneratedOnAdd()
-                        .HasColumnType("uniqueidentifier");
-
-                    b.Property<Guid>("ConsultaId")
-                        .HasColumnType("uniqueidentifier");
-
-                    b.Property<Guid>("ContratoId")
-                        .HasColumnType("uniqueidentifier");
-
-                    b.Property<Guid>("FornecedorId")
-                        .HasColumnType("uniqueidentifier");
-
-                    b.HasKey("Id");
-
-                    b.HasIndex("ConsultaId")
-                        .IsUnique();
-
-                    b.HasIndex("ContratoId");
-
-                    b.HasIndex("FornecedorId")
-                        .IsUnique();
-
-                    b.ToTable("Contratados");
+                    b.ToTable("Consulta", (string)null);
                 });
 
             modelBuilder.Entity("XPTO.Domain.Entities.Contrato", b =>
                 {
                     b.Property<Guid>("Id")
                         .ValueGeneratedOnAdd()
+                        .HasColumnType("uniqueidentifier");
+
+                    b.Property<Guid>("ConsultaId")
                         .HasColumnType("uniqueidentifier");
 
                     b.Property<DateTime>("DataVigencia")
@@ -136,7 +124,7 @@ namespace XPTO.Data.Migrations
 
                     b.HasKey("Id");
 
-                    b.ToTable("Contratos", (string)null);
+                    b.ToTable("Contrato", (string)null);
                 });
 
             modelBuilder.Entity("XPTO.Domain.Entities.Fornecedor", b =>
@@ -157,7 +145,7 @@ namespace XPTO.Data.Migrations
 
                     b.HasKey("Id");
 
-                    b.ToTable("Fornecedores", (string)null);
+                    b.ToTable("Fornecedor", (string)null);
                 });
 
             modelBuilder.Entity("XPTO.Domain.Entities.Operacao", b =>
@@ -177,7 +165,7 @@ namespace XPTO.Data.Migrations
 
                     b.HasKey("Id");
 
-                    b.ToTable("Operacoes", (string)null);
+                    b.ToTable("Operacao", (string)null);
                 });
 
             modelBuilder.Entity("XPTO.Domain.Entities.PlanoTarifacao", b =>
@@ -196,7 +184,7 @@ namespace XPTO.Data.Migrations
 
                     b.HasKey("Id");
 
-                    b.ToTable("Planos_Tarifacao", (string)null);
+                    b.ToTable("PlanoTarifacao", (string)null);
                 });
 
             modelBuilder.Entity("XPTO.Domain.Entities.Telefone", b =>
@@ -221,7 +209,7 @@ namespace XPTO.Data.Migrations
 
                     b.HasIndex("ClienteId");
 
-                    b.ToTable("Telefones", (string)null);
+                    b.ToTable("Telefone", (string)null);
                 });
 
             modelBuilder.Entity("XPTO.Domain.Entities.Usuario", b =>
@@ -242,7 +230,7 @@ namespace XPTO.Data.Migrations
 
                     b.HasIndex("ClienteId");
 
-                    b.ToTable("Usuarios", (string)null);
+                    b.ToTable("Usuario", (string)null);
                 });
 
             modelBuilder.Entity("ClienteConsulta", b =>
@@ -285,33 +273,7 @@ namespace XPTO.Data.Migrations
 
                             b1.HasKey("ClienteId");
 
-                            b1.ToTable("Clientes");
-
-                            b1.WithOwner()
-                                .HasForeignKey("ClienteId");
-                        });
-
-                    b.OwnsOne("XPTO.Core.DomainObjects.ValueObjects.Nome", "Nome", b1 =>
-                        {
-                            b1.Property<Guid>("ClienteId")
-                                .HasColumnType("uniqueidentifier");
-
-                            b1.Property<string>("NomeCompleto")
-                                .IsRequired()
-                                .HasColumnType("varchar(100)")
-                                .HasColumnName("Nome");
-
-                            b1.Property<string>("PrimeiroNome")
-                                .IsRequired()
-                                .HasColumnType("varchar(100)");
-
-                            b1.Property<string>("SobreNome")
-                                .IsRequired()
-                                .HasColumnType("varchar(100)");
-
-                            b1.HasKey("ClienteId");
-
-                            b1.ToTable("Clientes");
+                            b1.ToTable("Cliente");
 
                             b1.WithOwner()
                                 .HasForeignKey("ClienteId");
@@ -319,13 +281,14 @@ namespace XPTO.Data.Migrations
 
                     b.Navigation("Cnpj")
                         .IsRequired();
-
-                    b.Navigation("Nome")
-                        .IsRequired();
                 });
 
             modelBuilder.Entity("XPTO.Domain.Entities.Consulta", b =>
                 {
+                    b.HasOne("XPTO.Domain.Entities.Contrato", "Contrato")
+                        .WithOne("Consulta")
+                        .HasForeignKey("XPTO.Domain.Entities.Consulta", "ContratoId");
+
                     b.HasOne("XPTO.Domain.Entities.Fornecedor", "Fornecedor")
                         .WithMany("Consultas")
                         .HasForeignKey("FornecedorId")
@@ -348,11 +311,13 @@ namespace XPTO.Data.Migrations
 
                             b1.HasKey("ConsultaId");
 
-                            b1.ToTable("Consultas");
+                            b1.ToTable("Consulta");
 
                             b1.WithOwner()
                                 .HasForeignKey("ConsultaId");
                         });
+
+                    b.Navigation("Contrato");
 
                     b.Navigation("Fornecedor");
 
@@ -360,30 +325,6 @@ namespace XPTO.Data.Migrations
 
                     b.Navigation("Senha")
                         .IsRequired();
-                });
-
-            modelBuilder.Entity("XPTO.Domain.Entities.ConsultaFornecedor", b =>
-                {
-                    b.HasOne("XPTO.Domain.Entities.Consulta", "Consulta")
-                        .WithOne()
-                        .HasForeignKey("XPTO.Domain.Entities.ConsultaFornecedor", "ConsultaId")
-                        .IsRequired();
-
-                    b.HasOne("XPTO.Domain.Entities.Contrato", "Contrato")
-                        .WithMany("Contratados")
-                        .HasForeignKey("ContratoId")
-                        .IsRequired();
-
-                    b.HasOne("XPTO.Domain.Entities.Fornecedor", "Fornecedor")
-                        .WithOne()
-                        .HasForeignKey("XPTO.Domain.Entities.ConsultaFornecedor", "FornecedorId")
-                        .IsRequired();
-
-                    b.Navigation("Consulta");
-
-                    b.Navigation("Contrato");
-
-                    b.Navigation("Fornecedor");
                 });
 
             modelBuilder.Entity("XPTO.Domain.Entities.Telefone", b =>
@@ -413,7 +354,7 @@ namespace XPTO.Data.Migrations
 
                             b1.HasKey("UsuarioId");
 
-                            b1.ToTable("Usuarios");
+                            b1.ToTable("Usuario");
 
                             b1.WithOwner()
                                 .HasForeignKey("UsuarioId");
@@ -432,7 +373,8 @@ namespace XPTO.Data.Migrations
 
             modelBuilder.Entity("XPTO.Domain.Entities.Contrato", b =>
                 {
-                    b.Navigation("Contratados");
+                    b.Navigation("Consulta")
+                        .IsRequired();
                 });
 
             modelBuilder.Entity("XPTO.Domain.Entities.Fornecedor", b =>

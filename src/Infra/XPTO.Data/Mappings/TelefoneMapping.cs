@@ -15,7 +15,7 @@ namespace XPTO.Data.Mappings
                 .HasColumnName("Numero")
                 .HasColumnType("varchar(13)");
 
-            builder.ToTable("Telefones");
+            builder.ToTable("Telefone");
         }
     }
 }
