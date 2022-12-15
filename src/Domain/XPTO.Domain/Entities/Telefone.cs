@@ -1,4 +1,5 @@
 ﻿using XPTO.Core.DomainObjects;
+using XPTO.Domain.Enums;
 
 namespace XPTO.Domain.Entities
 {
@@ -6,6 +7,7 @@ namespace XPTO.Domain.Entities
     {
         public Guid ClienteId { get; set; }
         public string Numero { get; set; }
-        public Cliente Cliente { get; set; }
+        public TipoTelefone TipoTelefone { get; set; } 
+        //public Cliente Cliente { get; set; }
     }
 }
