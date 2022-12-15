@@ -5,6 +5,5 @@ namespace XPTO.Domain.Interfaces.Services
 {
     public interface IUsuarioService : IService<Usuario>
     {
-
     }
 }
