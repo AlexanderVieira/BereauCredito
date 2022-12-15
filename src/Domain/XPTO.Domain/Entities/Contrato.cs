@@ -6,5 +6,11 @@ namespace XPTO.Domain.Entities
     {
         public DateTime DataVigencia { get; set; }
         public decimal Valor  { get; set; }
+        public ICollection<ConsultaFornecedor> Contratados { get; set; }
+
+        public Contrato()
+        {
+            Contratados = new HashSet<ConsultaFornecedor>();
+        }
     }
 }

@@ -41,6 +41,7 @@ namespace XPTO.UI.MVC.Configuration
                 pattern: "{controller=Home}/{action=Index}/{id?}");
 
             app.MapRazorPages();
+
         }
     }
 }

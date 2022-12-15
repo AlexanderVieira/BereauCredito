@@ -14,13 +14,14 @@ namespace XPTO.Data.Context
         public DbSet<Consulta> Consultas { get; set; }
         public DbSet<PlanoTarifacao> Planos { get; set; }
         public DbSet<Contrato> Contratos { get; set; }
+        public DbSet<ConsultaFornecedor> Contratados { get; set; }
 
         public AppDbContext(DbContextOptions<AppDbContext> options) : base(options) 
         {
             ChangeTracker.QueryTrackingBehavior = QueryTrackingBehavior.NoTracking;
             ChangeTracker.AutoDetectChangesEnabled = false;
         }
-
+       
         protected override void OnModelCreating(ModelBuilder modelBuilder)
         {
             //modelBuilder.Ignore<ValidationResult>();            

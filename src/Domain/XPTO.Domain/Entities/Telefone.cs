@@ -8,6 +8,6 @@ namespace XPTO.Domain.Entities
         public Guid ClienteId { get; set; }
         public string Numero { get; set; }
         public TipoTelefone TipoTelefone { get; set; } 
-        public Cliente Cliente { get; set; }
+        //public Cliente Cliente { get; set; }
     }
 }

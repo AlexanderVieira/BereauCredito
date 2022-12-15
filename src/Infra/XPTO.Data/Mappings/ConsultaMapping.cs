@@ -27,6 +27,10 @@ namespace XPTO.Data.Mappings
                 .WithMany(p => p.Consultas)
                 .HasForeignKey(c => c.PlanoTarifacaoId);
 
+            builder.HasOne(c => c.Fornecedor)
+                .WithMany(p => p.Consultas)
+                .HasForeignKey(c => c.FornecedorId);            
+
             builder.ToTable("Consultas");
         }
     }

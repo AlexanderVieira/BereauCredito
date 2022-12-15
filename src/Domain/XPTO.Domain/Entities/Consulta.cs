@@ -10,7 +10,7 @@ namespace XPTO.Domain.Entities
         public string Login { get; set; }
         public Senha Senha { get; set; }
         public Fornecedor Fornecedor { get; set; }
-        public PlanoTarifacao PlanoTarifacao { get; set; }
+        public PlanoTarifacao PlanoTarifacao { get; set; }        
         public ICollection<Cliente> Clientes { get; set; }
 
         public Consulta()

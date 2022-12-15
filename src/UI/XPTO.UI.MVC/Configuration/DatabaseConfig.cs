@@ -5,10 +5,11 @@ namespace XPTO.UI.MVC.Configuration
 {
     public static class DatabaseConfig
     {
-        public static IServiceCollection AddInMemoryDatabaseConfiguration(this IServiceCollection services)
+        public static IServiceCollection AddInMemoryDatabaseConfiguration(this IServiceCollection services, IConfiguration configuration)
         {
             services.AddDbContext<AppDbContext>(options =>
-                options.UseInMemoryDatabase("DefaultConnection"));
+                options.UseSqlServer(configuration.GetConnectionString("DefaultConnection"),
+                                     providerOptions => providerOptions.EnableRetryOnFailure()));
 
             return services;
         }
