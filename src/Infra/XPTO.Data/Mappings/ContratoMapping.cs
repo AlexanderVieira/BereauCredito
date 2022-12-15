@@ -18,9 +18,13 @@ namespace XPTO.Data.Mappings
             builder.Property(f => f.Valor)
                 .IsRequired()
                 .HasColumnName("Valor")
-                .HasColumnType("decimal(10,2)");            
+                .HasColumnType("decimal(10,2)");
 
-            builder.ToTable("Contratos");
+            builder.HasOne(c => c.Consulta)
+                .WithOne(c => c.Contrato)
+                .HasForeignKey<Consulta>(c => c.ContratoId);
+
+            builder.ToTable("Contrato");
         }
 
     }

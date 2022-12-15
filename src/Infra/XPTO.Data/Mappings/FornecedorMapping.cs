@@ -20,7 +20,7 @@ namespace XPTO.Data.Mappings
                 .HasColumnName("Descricao")
                 .HasColumnType("varchar(200)");
 
-            builder.ToTable("Fornecedores");
+            builder.ToTable("Fornecedor");
         }
         
     }

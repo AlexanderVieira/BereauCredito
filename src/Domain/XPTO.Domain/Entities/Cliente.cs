@@ -5,7 +5,7 @@ namespace XPTO.Domain.Entities
 {
     public class Cliente : Entity
     {
-        public Nome Nome { get; set; }
+        public string Nome { get; set; }
         public Cnpj Cnpj { get; set; }
         public ICollection<Telefone> Telefones { get; set; }
         public ICollection<Usuario> Usuarios { get; set; }

@@ -6,41 +6,40 @@ using Microsoft.EntityFrameworkCore.Migrations;
 namespace XPTO.Data.Migrations
 {
     /// <inheritdoc />
-    public partial class InicialSetup : Migration
+    public partial class InitialMigration : Migration
     {
         /// <inheritdoc />
         protected override void Up(MigrationBuilder migrationBuilder)
         {
             migrationBuilder.CreateTable(
-                name: "Clientes",
+                name: "Cliente",
                 columns: table => new
                 {
                     Id = table.Column<Guid>(type: "uniqueidentifier", nullable: false),
-                    NomePrimeiroNome = table.Column<string>(name: "Nome_PrimeiroNome", type: "varchar(100)", nullable: false),
-                    NomeSobreNome = table.Column<string>(name: "Nome_SobreNome", type: "varchar(100)", nullable: false),
                     Nome = table.Column<string>(type: "varchar(100)", nullable: false),
                     Cnpj = table.Column<string>(type: "varchar(14)", nullable: false)
                 },
                 constraints: table =>
                 {
-                    table.PrimaryKey("PK_Clientes", x => x.Id);
+                    table.PrimaryKey("PK_Cliente", x => x.Id);
                 });
 
             migrationBuilder.CreateTable(
-                name: "Contratos",
+                name: "Contrato",
                 columns: table => new
                 {
                     Id = table.Column<Guid>(type: "uniqueidentifier", nullable: false),
+                    ConsultaId = table.Column<Guid>(type: "uniqueidentifier", nullable: false),
                     DataVigencia = table.Column<DateTime>(name: "Data_Vigencia", type: "datetime2", nullable: false),
                     Valor = table.Column<decimal>(type: "decimal(10,2)", nullable: false)
                 },
                 constraints: table =>
                 {
-                    table.PrimaryKey("PK_Contratos", x => x.Id);
+                    table.PrimaryKey("PK_Contrato", x => x.Id);
                 });
 
             migrationBuilder.CreateTable(
-                name: "Fornecedores",
+                name: "Fornecedor",
                 columns: table => new
                 {
                     Id = table.Column<Guid>(type: "uniqueidentifier", nullable: false),
@@ -49,11 +48,11 @@ namespace XPTO.Data.Migrations
                 },
                 constraints: table =>
                 {
-                    table.PrimaryKey("PK_Fornecedores", x => x.Id);
+                    table.PrimaryKey("PK_Fornecedor", x => x.Id);
                 });
 
             migrationBuilder.CreateTable(
-                name: "Operacoes",
+                name: "Operacao",
                 columns: table => new
                 {
                     Id = table.Column<Guid>(type: "uniqueidentifier", nullable: false),
@@ -62,11 +61,11 @@ namespace XPTO.Data.Migrations
                 },
                 constraints: table =>
                 {
-                    table.PrimaryKey("PK_Operacoes", x => x.Id);
+                    table.PrimaryKey("PK_Operacao", x => x.Id);
                 });
 
             migrationBuilder.CreateTable(
-                name: "Planos_Tarifacao",
+                name: "PlanoTarifacao",
                 columns: table => new
                 {
                     Id = table.Column<Guid>(type: "uniqueidentifier", nullable: false),
@@ -75,11 +74,11 @@ namespace XPTO.Data.Migrations
                 },
                 constraints: table =>
                 {
-                    table.PrimaryKey("PK_Planos_Tarifacao", x => x.Id);
+                    table.PrimaryKey("PK_PlanoTarifacao", x => x.Id);
                 });
 
             migrationBuilder.CreateTable(
-                name: "Telefones",
+                name: "Telefone",
                 columns: table => new
                 {
                     Id = table.Column<Guid>(type: "uniqueidentifier", nullable: false),
@@ -89,16 +88,16 @@ namespace XPTO.Data.Migrations
                 },
                 constraints: table =>
                 {
-                    table.PrimaryKey("PK_Telefones", x => x.Id);
+                    table.PrimaryKey("PK_Telefone", x => x.Id);
                     table.ForeignKey(
-                        name: "FK_Telefones_Clientes_ClienteId",
+                        name: "FK_Telefone_Cliente_ClienteId",
                         column: x => x.ClienteId,
-                        principalTable: "Clientes",
+                        principalTable: "Cliente",
                         principalColumn: "Id");
                 });
 
             migrationBuilder.CreateTable(
-                name: "Usuarios",
+                name: "Usuario",
                 columns: table => new
                 {
                     Id = table.Column<Guid>(type: "uniqueidentifier", nullable: false),
@@ -108,36 +107,42 @@ namespace XPTO.Data.Migrations
                 },
                 constraints: table =>
                 {
-                    table.PrimaryKey("PK_Usuarios", x => x.Id);
+                    table.PrimaryKey("PK_Usuario", x => x.Id);
                     table.ForeignKey(
-                        name: "FK_Usuarios_Clientes_ClienteId",
+                        name: "FK_Usuario_Cliente_ClienteId",
                         column: x => x.ClienteId,
-                        principalTable: "Clientes",
+                        principalTable: "Cliente",
                         principalColumn: "Id");
                 });
 
             migrationBuilder.CreateTable(
-                name: "Consultas",
+                name: "Consulta",
                 columns: table => new
                 {
                     Id = table.Column<Guid>(type: "uniqueidentifier", nullable: false),
                     FornecedorId = table.Column<Guid>(type: "uniqueidentifier", nullable: false),
                     PlanoTarifacaoId = table.Column<Guid>(type: "uniqueidentifier", nullable: false),
+                    Contrato = table.Column<Guid>(type: "uniqueidentifier", nullable: true),
                     Login = table.Column<string>(type: "varchar(50)", nullable: false),
                     Senha = table.Column<string>(type: "varchar(8)", nullable: false)
                 },
                 constraints: table =>
                 {
-                    table.PrimaryKey("PK_Consultas", x => x.Id);
+                    table.PrimaryKey("PK_Consulta", x => x.Id);
                     table.ForeignKey(
-                        name: "FK_Consultas_Fornecedores_FornecedorId",
-                        column: x => x.FornecedorId,
-                        principalTable: "Fornecedores",
+                        name: "FK_Consulta_Contrato_Contrato",
+                        column: x => x.Contrato,
+                        principalTable: "Contrato",
                         principalColumn: "Id");
                     table.ForeignKey(
-                        name: "FK_Consultas_Planos_Tarifacao_PlanoTarifacaoId",
+                        name: "FK_Consulta_Fornecedor_FornecedorId",
+                        column: x => x.FornecedorId,
+                        principalTable: "Fornecedor",
+                        principalColumn: "Id");
+                    table.ForeignKey(
+                        name: "FK_Consulta_PlanoTarifacao_PlanoTarifacaoId",
                         column: x => x.PlanoTarifacaoId,
-                        principalTable: "Planos_Tarifacao",
+                        principalTable: "PlanoTarifacao",
                         principalColumn: "Id");
                 });
 
@@ -152,14 +157,14 @@ namespace XPTO.Data.Migrations
                 {
                     table.PrimaryKey("PK_OperacaoUsuario", x => new { x.OperacoesId, x.UsuariosId });
                     table.ForeignKey(
-                        name: "FK_OperacaoUsuario_Operacoes_OperacoesId",
+                        name: "FK_OperacaoUsuario_Operacao_OperacoesId",
                         column: x => x.OperacoesId,
-                        principalTable: "Operacoes",
+                        principalTable: "Operacao",
                         principalColumn: "Id");
                     table.ForeignKey(
-                        name: "FK_OperacaoUsuario_Usuarios_UsuariosId",
+                        name: "FK_OperacaoUsuario_Usuario_UsuariosId",
                         column: x => x.UsuariosId,
-                        principalTable: "Usuarios",
+                        principalTable: "Usuario",
                         principalColumn: "Id");
                 });
 
@@ -174,43 +179,14 @@ namespace XPTO.Data.Migrations
                 {
                     table.PrimaryKey("PK_ClienteConsulta", x => new { x.ClientesId, x.ConsultasId });
                     table.ForeignKey(
-                        name: "FK_ClienteConsulta_Clientes_ClientesId",
+                        name: "FK_ClienteConsulta_Cliente_ClientesId",
                         column: x => x.ClientesId,
-                        principalTable: "Clientes",
+                        principalTable: "Cliente",
                         principalColumn: "Id");
                     table.ForeignKey(
-                        name: "FK_ClienteConsulta_Consultas_ConsultasId",
+                        name: "FK_ClienteConsulta_Consulta_ConsultasId",
                         column: x => x.ConsultasId,
-                        principalTable: "Consultas",
-                        principalColumn: "Id");
-                });
-
-            migrationBuilder.CreateTable(
-                name: "Contratados",
-                columns: table => new
-                {
-                    Id = table.Column<Guid>(type: "uniqueidentifier", nullable: false),
-                    ContratoId = table.Column<Guid>(type: "uniqueidentifier", nullable: false),
-                    ConsultaId = table.Column<Guid>(type: "uniqueidentifier", nullable: false),
-                    FornecedorId = table.Column<Guid>(type: "uniqueidentifier", nullable: false)
-                },
-                constraints: table =>
-                {
-                    table.PrimaryKey("PK_Contratados", x => x.Id);
-                    table.ForeignKey(
-                        name: "FK_Contratados_Consultas_ConsultaId",
-                        column: x => x.ConsultaId,
-                        principalTable: "Consultas",
-                        principalColumn: "Id");
-                    table.ForeignKey(
-                        name: "FK_Contratados_Contratos_ContratoId",
-                        column: x => x.ContratoId,
-                        principalTable: "Contratos",
-                        principalColumn: "Id");
-                    table.ForeignKey(
-                        name: "FK_Contratados_Fornecedores_FornecedorId",
-                        column: x => x.FornecedorId,
-                        principalTable: "Fornecedores",
+                        principalTable: "Consulta",
                         principalColumn: "Id");
                 });
 
@@ -220,31 +196,21 @@ namespace XPTO.Data.Migrations
                 column: "ConsultasId");
 
             migrationBuilder.CreateIndex(
-                name: "IX_Consultas_FornecedorId",
-                table: "Consultas",
+                name: "IX_Consulta_Contrato",
+                table: "Consulta",
+                column: "Contrato",
+                unique: true,
+                filter: "[Contrato] IS NOT NULL");
+
+            migrationBuilder.CreateIndex(
+                name: "IX_Consulta_FornecedorId",
+                table: "Consulta",
                 column: "FornecedorId");
 
             migrationBuilder.CreateIndex(
-                name: "IX_Consultas_PlanoTarifacaoId",
-                table: "Consultas",
+                name: "IX_Consulta_PlanoTarifacaoId",
+                table: "Consulta",
                 column: "PlanoTarifacaoId");
-
-            migrationBuilder.CreateIndex(
-                name: "IX_Contratados_ConsultaId",
-                table: "Contratados",
-                column: "ConsultaId",
-                unique: true);
-
-            migrationBuilder.CreateIndex(
-                name: "IX_Contratados_ContratoId",
-                table: "Contratados",
-                column: "ContratoId");
-
-            migrationBuilder.CreateIndex(
-                name: "IX_Contratados_FornecedorId",
-                table: "Contratados",
-                column: "FornecedorId",
-                unique: true);
 
             migrationBuilder.CreateIndex(
                 name: "IX_OperacaoUsuario_UsuariosId",
@@ -252,13 +218,13 @@ namespace XPTO.Data.Migrations
                 column: "UsuariosId");
 
             migrationBuilder.CreateIndex(
-                name: "IX_Telefones_ClienteId",
-                table: "Telefones",
+                name: "IX_Telefone_ClienteId",
+                table: "Telefone",
                 column: "ClienteId");
 
             migrationBuilder.CreateIndex(
-                name: "IX_Usuarios_ClienteId",
-                table: "Usuarios",
+                name: "IX_Usuario_ClienteId",
+                table: "Usuario",
                 column: "ClienteId");
         }
 
@@ -269,34 +235,31 @@ namespace XPTO.Data.Migrations
                 name: "ClienteConsulta");
 
             migrationBuilder.DropTable(
-                name: "Contratados");
-
-            migrationBuilder.DropTable(
                 name: "OperacaoUsuario");
 
             migrationBuilder.DropTable(
-                name: "Telefones");
+                name: "Telefone");
 
             migrationBuilder.DropTable(
-                name: "Consultas");
+                name: "Consulta");
 
             migrationBuilder.DropTable(
-                name: "Contratos");
+                name: "Operacao");
 
             migrationBuilder.DropTable(
-                name: "Operacoes");
+                name: "Usuario");
 
             migrationBuilder.DropTable(
-                name: "Usuarios");
+                name: "Contrato");
 
             migrationBuilder.DropTable(
-                name: "Fornecedores");
+                name: "Fornecedor");
 
             migrationBuilder.DropTable(
-                name: "Planos_Tarifacao");
+                name: "PlanoTarifacao");
 
             migrationBuilder.DropTable(
-                name: "Clientes");
+                name: "Cliente");
         }
     }
 }

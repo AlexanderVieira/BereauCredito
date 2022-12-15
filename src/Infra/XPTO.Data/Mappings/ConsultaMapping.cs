@@ -10,6 +10,9 @@ namespace XPTO.Data.Mappings
         {
             builder.HasKey(u => u.Id);
 
+            builder.Property(c => c.ContratoId)
+                .HasColumnName("Contrato");
+
             builder.Property(u => u.Login)
                 .IsRequired()
                 .HasColumnName("Login")
@@ -31,7 +34,7 @@ namespace XPTO.Data.Mappings
                 .WithMany(p => p.Consultas)
                 .HasForeignKey(c => c.FornecedorId);            
 
-            builder.ToTable("Consultas");
+            builder.ToTable("Consulta");
         }
     }
 }

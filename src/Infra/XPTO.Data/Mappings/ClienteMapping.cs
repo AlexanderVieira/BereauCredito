@@ -10,14 +10,10 @@ namespace XPTO.Data.Mappings
         public void Configure(EntityTypeBuilder<Cliente> builder)
         {
             builder.HasKey(c => c.Id);
-            
-            builder.OwnsOne(c => c.Nome, tf => 
-            { 
-                tf.Property(c => c.NomeCompleto)
-                .IsRequired()                
-                .HasColumnName("Nome")
-                .HasColumnType("varchar(100)"); 
-            });
+
+            builder.Property(c => c.Nome)
+                .IsRequired()
+                .HasColumnName(nameof(Nome));                
 
             builder.OwnsOne(c => c.Cnpj, tf => 
             { 
@@ -38,7 +34,7 @@ namespace XPTO.Data.Mappings
             builder.HasMany(c => c.Consultas)
                 .WithMany(c => c.Clientes);
 
-            builder.ToTable("Clientes");
+            builder.ToTable("Cliente");
         }
     }
 }

@@ -4,13 +4,9 @@ namespace XPTO.Domain.Entities
 {
     public class Contrato : Entity
     {
+        public Guid ConsultaId { get; set; }
         public DateTime DataVigencia { get; set; }
         public decimal Valor  { get; set; }
-        public ICollection<ConsultaFornecedor> Contratados { get; set; }
-
-        public Contrato()
-        {
-            Contratados = new HashSet<ConsultaFornecedor>();
-        }
+        public Consulta Consulta { get; set; }
     }
 }

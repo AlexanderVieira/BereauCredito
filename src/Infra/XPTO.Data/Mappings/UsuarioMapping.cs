@@ -26,7 +26,7 @@ namespace XPTO.Data.Mappings
             builder.HasMany(u => u.Operacoes)
                 .WithMany(o => o.Usuarios);
 
-            builder.ToTable("Usuarios");
+            builder.ToTable("Usuario");
         }
     }
 }

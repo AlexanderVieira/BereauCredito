@@ -20,7 +20,7 @@ namespace XPTO.Data.Mappings
                 .HasColumnName("Valor")
                 .HasColumnType("decimal(10,2)");
 
-            builder.ToTable("Planos_Tarifacao");
+            builder.ToTable("PlanoTarifacao");
         }
     }
 }
