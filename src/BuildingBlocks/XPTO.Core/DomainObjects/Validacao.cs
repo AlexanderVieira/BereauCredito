@@ -5,6 +5,7 @@ namespace XPTO.Core.DomainObjects
 {
     public class Validacao
     {
+        private const string Pattern = @"^(?=.*[A-Za-z])(?=.*\d)(?=.*[@$!%*#?&])[A-Za-z\d@$!%*#?&]{8,}$";
         public static void ValidarSeIgual(object obj1, object obj2, string mensagem)
         {
             if (obj1.Equals(obj2)) throw new DomainException(mensagem);
@@ -19,6 +20,12 @@ namespace XPTO.Core.DomainObjects
         {
             var regex = new Regex(pattern);
             if (regex.IsMatch(valor)) throw new DomainException(mensagem);            
+        }
+
+        public static bool ValidarSeDiferente(string pattern, string valor)
+        {
+            var regex = new Regex(pattern);
+            return regex.IsMatch(valor);
         }
 
         public static void ValidarTamanho(string valor, int minimo, int maximo, string mensagem)
