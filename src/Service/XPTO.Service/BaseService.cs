@@ -1,57 +1,78 @@
-﻿using System.Linq.Expressions;
-using XPTO.Core;
-using XPTO.Core.Data;
+﻿using FluentValidation;
+using FluentValidation.Results;
 using XPTO.Core.DomainObjects;
 
 namespace XPTO.Service
 {
-    public class BaseService<TEntity> : IService<TEntity> where TEntity : Entity, new()
+    public class BaseService
+    {        
+        private readonly INotificador _notificador;
+
+        public BaseService(INotificador notificador)
+        {
+            _notificador = notificador;
+        }        
+
+        protected void Notificar(ValidationResult validationResult)
+        {
+            foreach (var error in validationResult.Errors)
+            {
+                Notificar(error.ErrorMessage);
+            }
+        }
+
+        protected void Notificar(string mensagem)
+        {
+            _notificador.Handle(new Notificacao(mensagem));
+        }
+
+        protected bool ExecutarValidacao<TV, TE>(TV validacao, TE entidade) where TV : AbstractValidator<TE> where TE : Entity
+        {   
+            var validator = validacao.Validate(entidade);            
+            if (validator.IsValid) return true;
+            Notificar(validator);
+            return false;
+        }        
+    }
+    
+    public interface INotificador
     {
-        private readonly IRepository<TEntity> _repo;
+        bool TemNotificacao();
+        List<Notificacao> ObterNotificacoes();
+        void Handle(Notificacao notificacao);
+    }
 
-        protected BaseService(IRepository<TEntity> repo)
+    public class Notificacao
+    {
+        public string Mensagem { get; }
+        public Notificacao(string mensagem)
         {
-            _repo = repo;
+            Mensagem = mensagem;
+        }        
+    }
+
+    public class Notificador : INotificador
+    {
+        private List<Notificacao> _notificacoes;
+
+        public Notificador()
+        {
+            _notificacoes = new List<Notificacao>();
         }
 
-        public async Task Adicionar(TEntity entity)
+        public void Handle(Notificacao notificacao)
         {
-            await _repo.Adicionar(entity);
+            _notificacoes.Add(notificacao);
         }
 
-        public async Task Atualizar(TEntity entity)
+        public List<Notificacao> ObterNotificacoes()
         {
-            await _repo.Atualizar(entity);
+            return _notificacoes;
         }
 
-        public async Task<IEnumerable<TEntity>> Buscar(Expression<Func<TEntity, bool>> predicate)
+        public bool TemNotificacao()
         {
-            return await _repo.Buscar(predicate);
-        }
-
-        public void Dispose()
-        {
-            _repo?.Dispose();
-        }
-
-        public async Task<TEntity> ObterPorId(Guid id)
-        {
-            return await _repo.ObterPorId(id);
-        }
-
-        public async Task<List<TEntity>> ObterTodos()
-        {
-            return await _repo.ObterTodos();
-        }
-
-        public async Task Remover(Guid id)
-        {
-            await _repo.Remover(id);
-        }
-
-        public async Task<int> SaveChanges()
-        {
-            return await _repo.SaveChanges();
+            return _notificacoes.Any();
         }
     }
 }

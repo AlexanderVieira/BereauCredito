@@ -23,8 +23,7 @@ namespace XPTO.UI.MVC.Configuration
             services.AddScoped<IOperacaoRepository, OperacaoRepository>();
             #endregion
 
-            #region Services
-            services.AddScoped(typeof(IService<>), typeof(BaseService<>));
+            #region Services            
             services.AddScoped<IUsuarioService, UsuarioService>();
             services.AddScoped<IClienteService, ClienteService>();
             services.AddScoped<IFornecedorService, FornecedorService>();
@@ -38,6 +37,10 @@ namespace XPTO.UI.MVC.Configuration
             services.AddScoped<ISpcFacade, SpcFacade>();
             services.AddScoped<ISerasaFacade, SerasaFacade>();
             services.AddScoped<IReceitaFederalFacade, ReceitaFederalFacade>();
+            #endregion
+
+            #region Notificacoes
+            services.AddScoped<INotificador, Notificador>();
             #endregion
 
             return services;
