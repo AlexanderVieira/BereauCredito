@@ -91,7 +91,7 @@ namespace XPTO.Service
                     if (ExecutarValidacao(new ClienteTelefoneValidator(), telefone)) return true;                    
                 }
             }
-            return false;
+            return true;
         }
     }
     

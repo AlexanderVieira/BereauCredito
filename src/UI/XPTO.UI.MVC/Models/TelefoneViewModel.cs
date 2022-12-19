@@ -1,9 +1,9 @@
 ﻿using System.ComponentModel;
 using System.ComponentModel.DataAnnotations;
 
-namespace XPTO.UI.MVC.Models.Response
+namespace XPTO.UI.MVC.Models
 {
-    public class TelefoneResponseViewModel
+    public class TelefoneViewModel
     {
         [Key]
         public Guid Id { get; set; }

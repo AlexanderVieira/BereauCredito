@@ -1,9 +1,9 @@
 ﻿using System.ComponentModel;
 using System.ComponentModel.DataAnnotations;
 
-namespace XPTO.UI.MVC.Models.Response
+namespace XPTO.UI.MVC.Models
 {
-    public class ClienteResponseViewModel
+    public class ClienteViewModel
     {
         [Key]
         public Guid Id { get; set; }
@@ -16,8 +16,15 @@ namespace XPTO.UI.MVC.Models.Response
         [StringLength(14, ErrorMessage = "O campo {0} precisa ter {1} caracteres")]
         [DisplayName("CNPJ")]
         public string Cnpj { get; set; }
-        public ICollection<TelefoneResponseViewModel> Telefones { get; set; }
-        public ICollection<UsuarioResponseViewModel> Usuarios { get; set; }
-        public ICollection<ConsultaResponseViewModel> Consultas { get; set; }
+        public ICollection<TelefoneViewModel> Telefones { get; set; }
+        public ICollection<UsuarioViewModel> Usuarios { get; set; }
+        public ICollection<ConsultaViewModel> Consultas { get; set; }
+
+        public ClienteViewModel()
+        {
+            Telefones = new List<TelefoneViewModel>();
+            Usuarios = new List<UsuarioViewModel>();
+            Consultas = new List<ConsultaViewModel>();
+        }
     }
 }

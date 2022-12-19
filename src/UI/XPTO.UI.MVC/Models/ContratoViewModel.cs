@@ -1,9 +1,9 @@
 ﻿using System.ComponentModel;
 using System.ComponentModel.DataAnnotations;
 
-namespace XPTO.UI.MVC.Models.Response
+namespace XPTO.UI.MVC.Models
 {
-    public class ContratoResponseViewModel
+    public class ContratoViewModel
     {
         [Key]
         public Guid Id { get; set; }
@@ -19,6 +19,6 @@ namespace XPTO.UI.MVC.Models.Response
         //[Moeda]
         [Required(ErrorMessage = "O campo {0} é obrigatório")]
         public decimal Valor { get; set; }
-        public ConsultaResponseViewModel Consulta { get; set; }
+        //public ConsultaResponseViewModel Consulta { get; set; }
     }
 }

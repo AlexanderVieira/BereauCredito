@@ -1,4 +1,4 @@
-﻿@model XPTO.UI.MVC.Models.ClienteViewModel
+﻿@model XPTO.UI.MVC.Models.PlanoTarifacaoViewModel
 
 @{
     ViewData["Title"] = "Details";
@@ -7,20 +7,20 @@
 <h1>Details</h1>
 
 <div>
-    <h4>Cliente</h4>
+    <h4>PlanoTarifacaoResponseViewModel</h4>
     <hr />
     <dl class="row">
         <dt class = "col-sm-2">
-            @Html.DisplayNameFor(model => model.Nome)
+            @Html.DisplayNameFor(model => model.DataVigencia)
         </dt>
         <dd class = "col-sm-10">
-            @Html.DisplayFor(model => model.Nome)
+            @Html.DisplayFor(model => model.DataVigencia)
         </dd>
-         <dt class = "col-sm-2">
-            @Html.DisplayNameFor(model => model.Cnpj)
+        <dt class = "col-sm-2">
+            @Html.DisplayNameFor(model => model.Valor)
         </dt>
         <dd class = "col-sm-10">
-            @Html.DisplayFor(model => model.Cnpj)
+            @Html.DisplayFor(model => model.Valor)
         </dd>
     </dl>
 </div>

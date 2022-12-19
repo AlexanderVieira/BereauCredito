@@ -1,10 +1,13 @@
 ﻿using System.ComponentModel;
 using System.ComponentModel.DataAnnotations;
 
-namespace XPTO.UI.MVC.Models.Request
+namespace XPTO.UI.MVC.Models
 {
-    public class UsuarioRequestViewModel
+    public class UsuarioViewModel
     {
+        [Key]
+        public Guid Id { get; set; }
+
         [DisplayName("Cliente")]
         [Required(ErrorMessage = "O campo {0} é obrigatório")]
         public Guid ClienteId { get; set; }
@@ -16,7 +19,6 @@ namespace XPTO.UI.MVC.Models.Request
         [Required(ErrorMessage = "O campo {0} é obrigatório")]
         [StringLength(8, ErrorMessage = "O campo {0} precisa ter {2} caracteres")]
         public string Senha { get; set; }
-
-        public ICollection<OperacaoRequestViewModel> Operacoes { get; set; }
+        public ICollection<OperacaoViewModel> Operacoes { get; set; }
     }
 }

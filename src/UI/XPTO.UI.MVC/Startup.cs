@@ -1,4 +1,7 @@
 ﻿using XPTO.UI.MVC.Configuration;
+using Microsoft.EntityFrameworkCore;
+using Microsoft.Extensions.DependencyInjection;
+using XPTO.UI.MVC.Data;
 
 namespace XPTO.UI.MVC
 {
@@ -24,9 +27,13 @@ namespace XPTO.UI.MVC
 
         public void ConfigureServices(IServiceCollection services)
         {
+            services.AddAutoMapper(AppDomain.CurrentDomain.GetAssemblies());
             services.AddMvcConfiguration();
             services.AddInMemoryDatabaseConfiguration(Configuration);            
             services.ResolveDependencies();            
+
+            services.AddDbContext<XPTOUIMVCContext>(options =>
+                    options.UseSqlServer(Configuration.GetConnectionString("XPTOUIMVCContext")));
         }
 
         public void Configure(WebApplication app)
