@@ -1,5 +1,5 @@
 ## **MODELAGEM CONCEITUAL**
-- ### **Diagrama de Classes**
+- ### **Diagrama de Classe**
 
 ![](diagrama_conceitual.png)
 
