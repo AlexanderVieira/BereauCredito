@@ -3,12 +3,14 @@ using XPTO.Domain.Entities;
 using XPTO.Domain.Entities.Validations;
 using XPTO.Domain.Interfaces.Repositories;
 using XPTO.Domain.Interfaces.Services;
+using XPTO.Domain.Service.Notification;
 
 namespace XPTO.Service
 {
     public class ClienteService : BaseService, IClienteService
     {
         private readonly IClienteRepository _repo;
+
         public ClienteService(IClienteRepository repo, INotificador notificador) : base(notificador)
         {
             _repo = repo;

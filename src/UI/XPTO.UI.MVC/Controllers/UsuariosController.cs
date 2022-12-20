@@ -1,157 +1,124 @@
-﻿using Microsoft.AspNetCore.Mvc;
-using Microsoft.EntityFrameworkCore;
-using XPTO.UI.MVC.Data;
+﻿using AutoMapper;
+using Microsoft.AspNetCore.Mvc;
+using XPTO.Domain.Entities;
+using XPTO.Domain.Interfaces.Services;
+using XPTO.Domain.Service.Notification;
 using XPTO.UI.MVC.Models;
 
 namespace XPTO.UI.MVC.Controllers
 {
-    public class UsuariosController : Controller
+    public class UsuariosController : BaseController
     {
-        private readonly XPTOUIMVCContext _context;
-
-        public UsuariosController(XPTOUIMVCContext context)
+        private readonly IUsuarioService _service;        
+        private readonly IMapper _mapper;
+        public UsuariosController(IUsuarioService service, IMapper mapper, INotificador notificador) : base(notificador)
         {
-            _context = context;
+            _service = service;
+            _mapper = mapper;
         }
 
-        // GET: Usuarios
         public async Task<IActionResult> Index()
         {
-              return View(await _context.UsuarioResponseViewModel.ToListAsync());
+            return View(_mapper.Map<IEnumerable<UsuarioViewModel>>(await _service.ObterTodos()));
         }
 
-        // GET: Usuarios/Details/5
         public async Task<IActionResult> Details(Guid? id)
         {
-            if (id == null || _context.UsuarioResponseViewModel == null)
+            if (id == null)
             {
                 return NotFound();
             }
 
-            var usuarioResponseViewModel = await _context.UsuarioResponseViewModel
-                .FirstOrDefaultAsync(m => m.Id == id);
-            if (usuarioResponseViewModel == null)
+            var vmUsuario = _mapper.Map<UsuarioViewModel>(await _service.ObterPorId(id.Value));
+            if (vmUsuario == null)
             {
                 return NotFound();
             }
 
-            return View(usuarioResponseViewModel);
+            return View(vmUsuario);
         }
 
-        // GET: Usuarios/Create
         public IActionResult Create()
         {
             return View();
         }
 
-        // POST: Usuarios/Create
-        // To protect from overposting attacks, enable the specific properties you want to bind to.
-        // For more details, see http://go.microsoft.com/fwlink/?LinkId=317598.
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public async Task<IActionResult> Create([Bind("Id,ClienteId,Login,Senha")] UsuarioViewModel usuarioResponseViewModel)
+        public async Task<IActionResult> Create(UsuarioViewModel vmUsuario)
         {
             if (ModelState.IsValid)
             {
-                usuarioResponseViewModel.Id = Guid.NewGuid();
-                _context.Add(usuarioResponseViewModel);
-                await _context.SaveChangesAsync();
+                vmUsuario.Id = Guid.NewGuid();                
+                await _service.Adicionar(_mapper.Map<Usuario>(vmUsuario));
                 return RedirectToAction(nameof(Index));
             }
-            return View(usuarioResponseViewModel);
+            return View(vmUsuario);
         }
 
-        // GET: Usuarios/Edit/5
         public async Task<IActionResult> Edit(Guid? id)
         {
-            if (id == null || _context.UsuarioResponseViewModel == null)
+            if (id == null)
             {
                 return NotFound();
             }
 
-            var usuarioResponseViewModel = await _context.UsuarioResponseViewModel.FindAsync(id);
-            if (usuarioResponseViewModel == null)
+            var vmUsuario = _mapper.Map<UsuarioViewModel>(await _service.ObterPorId(id.Value));
+            if (vmUsuario == null)
             {
                 return NotFound();
             }
-            return View(usuarioResponseViewModel);
+
+            return View(vmUsuario);            
         }
 
-        // POST: Usuarios/Edit/5
-        // To protect from overposting attacks, enable the specific properties you want to bind to.
-        // For more details, see http://go.microsoft.com/fwlink/?LinkId=317598.
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public async Task<IActionResult> Edit(Guid id, [Bind("Id,ClienteId,Login,Senha")] UsuarioViewModel usuarioResponseViewModel)
+        public async Task<IActionResult> Edit(Guid id, UsuarioViewModel vmUsuario)
         {
-            if (id != usuarioResponseViewModel.Id)
+            if (id != vmUsuario.Id)
             {
                 return NotFound();
             }
 
             if (ModelState.IsValid)
             {
-                try
-                {
-                    _context.Update(usuarioResponseViewModel);
-                    await _context.SaveChangesAsync();
-                }
-                catch (DbUpdateConcurrencyException)
-                {
-                    if (!UsuarioResponseViewModelExists(usuarioResponseViewModel.Id))
-                    {
-                        return NotFound();
-                    }
-                    else
-                    {
-                        throw;
-                    }
-                }
+                await _service.Atualizar(_mapper.Map<Usuario>(vmUsuario));
                 return RedirectToAction(nameof(Index));
             }
-            return View(usuarioResponseViewModel);
+            return View(vmUsuario);
         }
 
-        // GET: Usuarios/Delete/5
         public async Task<IActionResult> Delete(Guid? id)
         {
-            if (id == null || _context.UsuarioResponseViewModel == null)
+            if (id == null)
             {
                 return NotFound();
             }
 
-            var usuarioResponseViewModel = await _context.UsuarioResponseViewModel
-                .FirstOrDefaultAsync(m => m.Id == id);
-            if (usuarioResponseViewModel == null)
+            var vmUsuario = _mapper.Map<UsuarioViewModel>(await _service.ObterPorId(id.Value));
+            if (vmUsuario == null)
             {
                 return NotFound();
             }
 
-            return View(usuarioResponseViewModel);
+            return View(vmUsuario);
         }
 
-        // POST: Usuarios/Delete/5
         [HttpPost, ActionName("Delete")]
         [ValidateAntiForgeryToken]
         public async Task<IActionResult> DeleteConfirmed(Guid id)
         {
-            if (_context.UsuarioResponseViewModel == null)
+            if (UsuarioExists(id))
             {
-                return Problem("Entity set 'XPTOUIMVCContext.UsuarioResponseViewModel'  is null.");
+                await _service.Remover(id);
             }
-            var usuarioResponseViewModel = await _context.UsuarioResponseViewModel.FindAsync(id);
-            if (usuarioResponseViewModel != null)
-            {
-                _context.UsuarioResponseViewModel.Remove(usuarioResponseViewModel);
-            }
-            
-            await _context.SaveChangesAsync();
             return RedirectToAction(nameof(Index));
         }
 
-        private bool UsuarioResponseViewModelExists(Guid id)
+        private bool UsuarioExists(Guid id)
         {
-          return _context.UsuarioResponseViewModel.Any(e => e.Id == id);
+            return _service.Buscar(e => e.Id == id).Result.Any();
         }
     }
 }

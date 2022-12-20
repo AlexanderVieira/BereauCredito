@@ -2,16 +2,17 @@
 using Microsoft.AspNetCore.Mvc;
 using XPTO.Domain.Entities;
 using XPTO.Domain.Interfaces.Services;
+using XPTO.Domain.Service.Notification;
 using XPTO.UI.MVC.Models;
 
 namespace XPTO.UI.MVC.Controllers
 {
-    public class ClientesController : Controller
+    public class ClientesController : BaseController
     {
         private readonly IClienteService _service;
         private readonly IMapper _mapper;
 
-        public ClientesController(IClienteService service, IMapper mapper)
+        public ClientesController(IClienteService service, IMapper mapper, INotificador notificador) : base(notificador)
         {
             _service = service;
             _mapper = mapper;
@@ -48,11 +49,10 @@ namespace XPTO.UI.MVC.Controllers
         public async Task<IActionResult> Create(ClienteViewModel vmCliente)
         {
             if (ModelState.IsValid)
-            {
-                //var cliente = new Cliente { Nome = vmCliente.Nome, Cnpj = new Cnpj(vmCliente.Cnpj) };
+            {                   
                 vmCliente.Id = Guid.NewGuid();
                 await _service.Adicionar(_mapper.Map<Cliente>(vmCliente));
-                
+                if (!OperacaoValida()) return View(vmCliente);
                 return RedirectToAction(nameof(Index));
             }
             return View(vmCliente);

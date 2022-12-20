@@ -1,4 +1,5 @@
-﻿using XPTO.Crosscutting.Bereaus.Interfaces;
+﻿using System.Diagnostics;
+using XPTO.Crosscutting.Bereaus.Interfaces;
 using XPTO.Domain.Entities;
 
 namespace XPTO.Crosscutting.Bereaus
@@ -7,7 +8,8 @@ namespace XPTO.Crosscutting.Bereaus
     {
         public Task ConsultarReceitaFederal(Consulta consulta)
         {
-            throw new NotImplementedException();
+            Debug.WriteLine("RF: Realizando consulta na RECEITA FEDERAL...");
+            return Task.CompletedTask;
         }
     }
 }

@@ -4,9 +4,9 @@ using XPTO.Domain.Interfaces.Repositories;
 
 namespace XPTO.Data.Repositories
 {
-    public class ClienteRepository : Repository<Cliente>, IClienteRepository
+    public class PlanoTarifacaoRepository : Repository<PlanoTarifacao>, IPlanoTarifacaoRepository
     {
-        public ClienteRepository(AppDbContext ctx) : base(ctx)
+        public PlanoTarifacaoRepository(AppDbContext ctx) : base(ctx)
         {
         }
     }

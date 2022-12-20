@@ -1,157 +1,126 @@
-﻿using Microsoft.AspNetCore.Mvc;
-using Microsoft.EntityFrameworkCore;
-using XPTO.UI.MVC.Data;
+﻿using AutoMapper;
+using Microsoft.AspNetCore.Mvc;
+using XPTO.Domain.Entities;
+using XPTO.Domain.Interfaces.Services;
+using XPTO.Domain.Service.Notification;
 using XPTO.UI.MVC.Models;
 
 namespace XPTO.UI.MVC.Controllers
 {
-    public class OperacoesController : Controller
+    public class OperacoesController : BaseController
     {
-        private readonly XPTOUIMVCContext _context;
-
-        public OperacoesController(XPTOUIMVCContext context)
+        private readonly IOperacaoService _service;
+        private readonly IMapper _mapper;
+        public OperacoesController(IOperacaoService service, IMapper mapper, INotificador notificador) : base(notificador)
         {
-            _context = context;
+            _service = service;
+            _mapper = mapper;
         }
 
-        // GET: Operacoes
         public async Task<IActionResult> Index()
         {
-              return View(await _context.OperacaoResponseViewModel.ToListAsync());
+            return View(_mapper.Map<IEnumerable<OperacaoViewModel>>(await _service.ObterTodos()));
         }
 
-        // GET: Operacoes/Details/5
         public async Task<IActionResult> Details(Guid? id)
         {
-            if (id == null || _context.OperacaoResponseViewModel == null)
+            if (id == null)
             {
                 return NotFound();
             }
 
-            var operacaoResponseViewModel = await _context.OperacaoResponseViewModel
-                .FirstOrDefaultAsync(m => m.Id == id);
-            if (operacaoResponseViewModel == null)
+            var vmOperacao = _mapper.Map<OperacaoViewModel>(await _service.ObterPorId(id.Value));
+            if (vmOperacao == null)
             {
                 return NotFound();
             }
 
-            return View(operacaoResponseViewModel);
+            return View(vmOperacao);
         }
 
-        // GET: Operacoes/Create
         public IActionResult Create()
         {
             return View();
         }
 
-        // POST: Operacoes/Create
-        // To protect from overposting attacks, enable the specific properties you want to bind to.
-        // For more details, see http://go.microsoft.com/fwlink/?LinkId=317598.
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public async Task<IActionResult> Create([Bind("Id,Descricao")] OperacaoViewModel operacaoResponseViewModel)
+        public async Task<IActionResult> Create(OperacaoViewModel vmOperacao)
         {
             if (ModelState.IsValid)
             {
-                operacaoResponseViewModel.Id = Guid.NewGuid();
-                _context.Add(operacaoResponseViewModel);
-                await _context.SaveChangesAsync();
+                vmOperacao.Id = Guid.NewGuid();
+                vmOperacao.DataOperacao = DateTime.Now;
+                await _service.Adicionar(_mapper.Map<Operacao>(vmOperacao));
                 return RedirectToAction(nameof(Index));
             }
-            return View(operacaoResponseViewModel);
+            return View(vmOperacao);
         }
 
-        // GET: Operacoes/Edit/5
         public async Task<IActionResult> Edit(Guid? id)
         {
-            if (id == null || _context.OperacaoResponseViewModel == null)
+            if (id == null)
             {
                 return NotFound();
             }
 
-            var operacaoResponseViewModel = await _context.OperacaoResponseViewModel.FindAsync(id);
-            if (operacaoResponseViewModel == null)
+            var vmOperacao = _mapper.Map<OperacaoViewModel>(await _service.ObterPorId(id.Value));
+            if (vmOperacao == null)
             {
                 return NotFound();
             }
-            return View(operacaoResponseViewModel);
+
+            return View(vmOperacao);
         }
 
-        // POST: Operacoes/Edit/5
-        // To protect from overposting attacks, enable the specific properties you want to bind to.
-        // For more details, see http://go.microsoft.com/fwlink/?LinkId=317598.
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public async Task<IActionResult> Edit(Guid id, [Bind("Id,Descricao")] OperacaoViewModel operacaoResponseViewModel)
+        public async Task<IActionResult> Edit(Guid id, OperacaoViewModel vmOperacao)
         {
-            if (id != operacaoResponseViewModel.Id)
+            if (id != vmOperacao.Id)
             {
                 return NotFound();
             }
 
             if (ModelState.IsValid)
             {
-                try
-                {
-                    _context.Update(operacaoResponseViewModel);
-                    await _context.SaveChangesAsync();
-                }
-                catch (DbUpdateConcurrencyException)
-                {
-                    if (!OperacaoResponseViewModelExists(operacaoResponseViewModel.Id))
-                    {
-                        return NotFound();
-                    }
-                    else
-                    {
-                        throw;
-                    }
-                }
+                await _service.Atualizar(_mapper.Map<Operacao>(vmOperacao));
                 return RedirectToAction(nameof(Index));
             }
-            return View(operacaoResponseViewModel);
+            return View(vmOperacao);
         }
 
-        // GET: Operacoes/Delete/5
         public async Task<IActionResult> Delete(Guid? id)
         {
-            if (id == null || _context.OperacaoResponseViewModel == null)
+            if (id == null)
             {
                 return NotFound();
             }
 
-            var operacaoResponseViewModel = await _context.OperacaoResponseViewModel
-                .FirstOrDefaultAsync(m => m.Id == id);
-            if (operacaoResponseViewModel == null)
+            var vmOperacao = _mapper.Map<OperacaoViewModel>(await _service.ObterPorId(id.Value));
+            if (vmOperacao == null)
             {
                 return NotFound();
             }
 
-            return View(operacaoResponseViewModel);
+            return View(vmOperacao);
         }
 
-        // POST: Operacoes/Delete/5
         [HttpPost, ActionName("Delete")]
         [ValidateAntiForgeryToken]
         public async Task<IActionResult> DeleteConfirmed(Guid id)
         {
-            if (_context.OperacaoResponseViewModel == null)
+            if (OperacaoExists(id))
             {
-                return Problem("Entity set 'XPTOUIMVCContext.OperacaoResponseViewModel'  is null.");
+                await _service.Remover(id);
             }
-            var operacaoResponseViewModel = await _context.OperacaoResponseViewModel.FindAsync(id);
-            if (operacaoResponseViewModel != null)
-            {
-                _context.OperacaoResponseViewModel.Remove(operacaoResponseViewModel);
-            }
-            
-            await _context.SaveChangesAsync();
+
             return RedirectToAction(nameof(Index));
         }
 
-        private bool OperacaoResponseViewModelExists(Guid id)
+        private bool OperacaoExists(Guid id)
         {
-          return _context.OperacaoResponseViewModel.Any(e => e.Id == id);
+          return _service.Buscar(e => e.Id == id).Result.Any();
         }
     }
 }

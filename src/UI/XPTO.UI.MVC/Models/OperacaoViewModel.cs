@@ -16,5 +16,10 @@ namespace XPTO.UI.MVC.Models
         [ScaffoldColumn(false)]
         public DateTime DataOperacao { get; set; }
         public ICollection<UsuarioViewModel> Usuarios { get; set; }
+
+        public OperacaoViewModel()
+        {
+            Usuarios = new HashSet<UsuarioViewModel>();
+        }
     }
 }
