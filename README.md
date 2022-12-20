@@ -8,7 +8,10 @@
     <strong>PÓS-GRADUAÇÃO MIT ENGENHARIA DE SOFTWARE COM .NET
 </strong>
     <br>
-    <strong>ALEXANDER VIEIRA DA SILVA</strong>
+    <strong>ALEXANDER SILVA</strong>
+    <strong>PEDRO NOVAES</strong>
+    <strong>MARLON BRAGA</strong>
+    <strong>BRUNO LIMA</strong>
     <br>
     <strong>ENGENHARIA DE SOFTWARE APLICADA</strong>
     <br>
@@ -33,7 +36,7 @@ _Fonte: [A base de dados pode ser acessada no Kaggle](https://www.kaggle.com/cod
 
 **Documentação**
 
-- <a href="https://github.com/AlexanderVieira/BereauCredito/tree/develop/docs">Projeto</a>
+- <a href="https://github.com/AlexanderVieira/BereauCredito/blob/develop/docs/diagramas.md">Projeto</a>
 
 ## Cenário atual
 
