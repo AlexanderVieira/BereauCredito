@@ -2,6 +2,7 @@
 using XPTO.Domain.Entities;
 using XPTO.Domain.Interfaces.Repositories;
 using XPTO.Domain.Interfaces.Services;
+using XPTO.Domain.Service.Notification;
 
 namespace XPTO.Service
 {

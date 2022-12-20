@@ -3,29 +3,30 @@ using XPTO.Domain.Entities;
 using XPTO.Domain.Interfaces.Repositories;
 using XPTO.Domain.Interfaces.Services;
 using XPTO.Domain.Service.Notification;
+using XPTO.Service;
 
-namespace XPTO.Service
+namespace XPTO.Domain.Service
 {
-    public class UsuarioService : BaseService, IUsuarioService
+    public class PlanoTarifacaoService : BaseService, IPlanoTarifacaoService
     {
-        private readonly IUsuarioRepository _repo;
+        private readonly IPlanoTarifacaoRepository _repo;
 
-        public UsuarioService(IUsuarioRepository repo, INotificador notificador) : base(notificador)
+        public PlanoTarifacaoService(IPlanoTarifacaoRepository repo, INotificador notificador) : base(notificador)
         {
             _repo = repo;
         }
 
-        public async Task Adicionar(Usuario usuario)
+        public async Task Adicionar(PlanoTarifacao plano)
         {
-            await _repo.Adicionar(usuario);
+            await _repo.Adicionar(plano);   
         }
 
-        public async Task Atualizar(Usuario usuario)
+        public async Task Atualizar(PlanoTarifacao plano)
         {
-            await _repo.Atualizar(usuario);
+            await _repo.Atualizar(plano);
         }
 
-        public async Task<IEnumerable<Usuario>> Buscar(Expression<Func<Usuario, bool>> predicate)
+        public async Task<IEnumerable<PlanoTarifacao>> Buscar(Expression<Func<PlanoTarifacao, bool>> predicate)
         {
             return await _repo.Buscar(predicate);
         }
@@ -35,12 +36,12 @@ namespace XPTO.Service
             _repo.Dispose();
         }
 
-        public async Task<Usuario> ObterPorId(Guid id)
+        public async Task<PlanoTarifacao> ObterPorId(Guid id)
         {
             return await _repo.ObterPorId(id);
         }
 
-        public async Task<List<Usuario>> ObterTodos()
+        public async Task<List<PlanoTarifacao>> ObterTodos()
         {
             return await _repo.ObterTodos();
         }

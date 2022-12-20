@@ -1,157 +1,126 @@
-﻿using Microsoft.AspNetCore.Mvc;
-using Microsoft.EntityFrameworkCore;
-using XPTO.UI.MVC.Data;
+﻿using AutoMapper;
+using Microsoft.AspNetCore.Mvc;
+using XPTO.Domain.Entities;
+using XPTO.Domain.Interfaces.Services;
+using XPTO.Domain.Service.Notification;
 using XPTO.UI.MVC.Models;
 
 namespace XPTO.UI.MVC.Controllers
 {
-    public class FornecedoresController : Controller
+    public class FornecedoresController : BaseController
     {
-        private readonly XPTOUIMVCContext _context;
+        private readonly IFornecedorService _service;
+        private readonly IMapper _mapper;
 
-        public FornecedoresController(XPTOUIMVCContext context)
+        public FornecedoresController(IFornecedorService service, IMapper mapper, INotificador notificador) : base(notificador)
         {
-            _context = context;
+            _service = service;
+            _mapper = mapper;
         }
 
-        // GET: Fornecedores
         public async Task<IActionResult> Index()
         {
-              return View(await _context.FornecedorResponseViewModel.ToListAsync());
+            return View(_mapper.Map<IEnumerable<FornecedorViewModel>>(await _service.ObterTodos()));
         }
 
-        // GET: Fornecedores/Details/5
         public async Task<IActionResult> Details(Guid? id)
         {
-            if (id == null || _context.FornecedorResponseViewModel == null)
+            if (id == null)
             {
                 return NotFound();
             }
 
-            var fornecedorResponseViewModel = await _context.FornecedorResponseViewModel
-                .FirstOrDefaultAsync(m => m.Id == id);
-            if (fornecedorResponseViewModel == null)
+            var vmFornecedor = _mapper.Map<FornecedorViewModel>(await _service.ObterPorId(id.Value));
+            if (vmFornecedor == null)
             {
                 return NotFound();
             }
 
-            return View(fornecedorResponseViewModel);
+            return View(vmFornecedor);
         }
 
-        // GET: Fornecedores/Create
         public IActionResult Create()
         {
             return View();
         }
 
-        // POST: Fornecedores/Create
-        // To protect from overposting attacks, enable the specific properties you want to bind to.
-        // For more details, see http://go.microsoft.com/fwlink/?LinkId=317598.
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public async Task<IActionResult> Create([Bind("Id,Nome,Descricao")] FornecedorViewModel fornecedorResponseViewModel)
+        public async Task<IActionResult> Create(FornecedorViewModel vmFornecedor)
         {
             if (ModelState.IsValid)
             {
-                fornecedorResponseViewModel.Id = Guid.NewGuid();
-                _context.Add(fornecedorResponseViewModel);
-                await _context.SaveChangesAsync();
+                vmFornecedor.Id = Guid.NewGuid();
+                await _service.Adicionar(_mapper.Map<Fornecedor>(vmFornecedor));
                 return RedirectToAction(nameof(Index));
             }
-            return View(fornecedorResponseViewModel);
+            return View(vmFornecedor);
         }
 
-        // GET: Fornecedores/Edit/5
         public async Task<IActionResult> Edit(Guid? id)
         {
-            if (id == null || _context.FornecedorResponseViewModel == null)
+            if (id == null)
             {
                 return NotFound();
             }
 
-            var fornecedorResponseViewModel = await _context.FornecedorResponseViewModel.FindAsync(id);
-            if (fornecedorResponseViewModel == null)
+            var vmFornecedor = _mapper.Map<FornecedorViewModel>(await _service.ObterPorId(id.Value));
+            if (vmFornecedor == null)
             {
                 return NotFound();
             }
-            return View(fornecedorResponseViewModel);
+
+            return View(vmFornecedor);
         }
 
-        // POST: Fornecedores/Edit/5
-        // To protect from overposting attacks, enable the specific properties you want to bind to.
-        // For more details, see http://go.microsoft.com/fwlink/?LinkId=317598.
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public async Task<IActionResult> Edit(Guid id, [Bind("Id,Nome,Descricao")] FornecedorViewModel fornecedorResponseViewModel)
+        public async Task<IActionResult> Edit(Guid id, FornecedorViewModel vmFornecedor)
         {
-            if (id != fornecedorResponseViewModel.Id)
+            if (id != vmFornecedor.Id)
             {
                 return NotFound();
             }
 
             if (ModelState.IsValid)
             {
-                try
-                {
-                    _context.Update(fornecedorResponseViewModel);
-                    await _context.SaveChangesAsync();
-                }
-                catch (DbUpdateConcurrencyException)
-                {
-                    if (!FornecedorResponseViewModelExists(fornecedorResponseViewModel.Id))
-                    {
-                        return NotFound();
-                    }
-                    else
-                    {
-                        throw;
-                    }
-                }
+                await _service.Atualizar(_mapper.Map<Fornecedor>(vmFornecedor));
                 return RedirectToAction(nameof(Index));
             }
-            return View(fornecedorResponseViewModel);
+            return View(vmFornecedor);
         }
 
-        // GET: Fornecedores/Delete/5
         public async Task<IActionResult> Delete(Guid? id)
         {
-            if (id == null || _context.FornecedorResponseViewModel == null)
+            if (id == null)
             {
                 return NotFound();
             }
 
-            var fornecedorResponseViewModel = await _context.FornecedorResponseViewModel
-                .FirstOrDefaultAsync(m => m.Id == id);
-            if (fornecedorResponseViewModel == null)
+            var vmFornecedor = _mapper.Map<FornecedorViewModel>(await _service.ObterPorId(id.Value));
+            if (vmFornecedor == null)
             {
                 return NotFound();
             }
 
-            return View(fornecedorResponseViewModel);
+            return View(vmFornecedor);
         }
 
-        // POST: Fornecedores/Delete/5
         [HttpPost, ActionName("Delete")]
         [ValidateAntiForgeryToken]
         public async Task<IActionResult> DeleteConfirmed(Guid id)
         {
-            if (_context.FornecedorResponseViewModel == null)
+            if (FornecedorExists(id))
             {
-                return Problem("Entity set 'XPTOUIMVCContext.FornecedorResponseViewModel'  is null.");
+                await _service.Remover(id);
             }
-            var fornecedorResponseViewModel = await _context.FornecedorResponseViewModel.FindAsync(id);
-            if (fornecedorResponseViewModel != null)
-            {
-                _context.FornecedorResponseViewModel.Remove(fornecedorResponseViewModel);
-            }
-            
-            await _context.SaveChangesAsync();
+
             return RedirectToAction(nameof(Index));
         }
 
-        private bool FornecedorResponseViewModelExists(Guid id)
+        private bool FornecedorExists(Guid id)
         {
-          return _context.FornecedorResponseViewModel.Any(e => e.Id == id);
+          return _service.Buscar(e => e.Id == id).Result.Any();
         }
     }
 }

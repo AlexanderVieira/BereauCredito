@@ -6,6 +6,8 @@ using XPTO.Data.Context;
 using XPTO.Data.Repositories;
 using XPTO.Domain.Interfaces.Repositories;
 using XPTO.Domain.Interfaces.Services;
+using XPTO.Domain.Service;
+using XPTO.Domain.Service.Notification;
 using XPTO.Service;
 
 namespace XPTO.UI.MVC.Configuration
@@ -21,6 +23,9 @@ namespace XPTO.UI.MVC.Configuration
             services.AddScoped<IClienteRepository, ClienteRepository>();
             services.AddScoped<IFornecedorRepository, FornecedorRepository>();
             services.AddScoped<IOperacaoRepository, OperacaoRepository>();
+            services.AddScoped<IConsultaRepository, ConsultaRepository>();
+            services.AddScoped<IContratoRepository, ContratoRepository>();            
+            services.AddScoped<IPlanoTarifacaoRepository, PlanoTarifacaoRepository>();
             #endregion
 
             #region Services            
@@ -28,9 +33,12 @@ namespace XPTO.UI.MVC.Configuration
             services.AddScoped<IClienteService, ClienteService>();
             services.AddScoped<IFornecedorService, FornecedorService>();
             services.AddScoped<IOperacaoService, OperacaoService>();
-            services.AddScoped<IConsultaService, SpcService>();
-            services.AddScoped<IConsultaService, SerasaService>();
-            services.AddScoped<IConsultaService, ReceitaFederalService>();
+            services.AddScoped<IConsultaService, ConsultaService>();
+            services.AddScoped<IContratoService, ContratoService>();
+            services.AddScoped<IPlanoTarifacaoService, PlanoTarifacaoService>();            
+            services.AddScoped<IBereauService, SpcService>();
+            services.AddScoped<IBereauService, SerasaService>();
+            services.AddScoped<IBereauService, ReceitaFederalService>();
             #endregion
 
             #region CrossCutting

@@ -1,13 +1,12 @@
 ﻿using System.Linq.Expressions;
-using XPTO.Core;
+using XPTO.Core.Data;
 using XPTO.Domain.Entities;
 
-namespace XPTO.Domain.Interfaces.Services
+namespace XPTO.Domain.Interfaces.Repositories
 {
-    public interface IConsultaService : IService<Consulta>
+    public interface IConsultaRepository : IRepository<Consulta>
     {
-        //Task Consultar(Consulta consulta);
         Task<IEnumerable<Consulta>> BuscarConsultasDetalhadas();
         Task<Consulta> BuscarConsultaDetalhada(Expression<Func<Consulta, bool>> predicate);
-    }    
+    }
 }

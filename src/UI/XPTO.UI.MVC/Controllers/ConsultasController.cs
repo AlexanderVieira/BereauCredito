@@ -1,177 +1,150 @@
-﻿using Microsoft.AspNetCore.Mvc;
+﻿using AutoMapper;
+using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.Rendering;
-using Microsoft.EntityFrameworkCore;
-using XPTO.UI.MVC.Data;
+using XPTO.Domain.Entities;
+using XPTO.Domain.Interfaces.Services;
+using XPTO.Domain.Service.Notification;
 using XPTO.UI.MVC.Models;
 
 namespace XPTO.UI.MVC.Controllers
 {
-    public class ConsultasController : Controller
-    {
-        private readonly XPTOUIMVCContext _context;
+    public class ConsultasController : BaseController
+    {        
+        private readonly IConsultaService _consultaService;
+        private readonly IFornecedorService _fornecedorService;
+        private readonly IPlanoTarifacaoService _planoTarifacaoService;
+        private readonly IContratoService _contratoService;
+        private readonly IMapper _mapper;
 
-        public ConsultasController(XPTOUIMVCContext context)
-        {
-            _context = context;
+        public ConsultasController(IConsultaService service, 
+                                   IFornecedorService fornecedorService, 
+                                   IPlanoTarifacaoService planoTarifacaoService, 
+                                   IContratoService contratoService, 
+                                   IMapper mapper, INotificador notificador) : base(notificador)
+        {            
+            _consultaService = service;
+            _fornecedorService = fornecedorService;
+            _planoTarifacaoService = planoTarifacaoService;
+            _contratoService = contratoService;
+            _mapper = mapper;
         }
 
-        // GET: Consultas
         public async Task<IActionResult> Index()
-        {
-            var xPTOUIMVCContext = _context.ConsultaResponseViewModel.Include(c => c.Contrato).Include(c => c.Fornecedor).Include(c => c.PlanoTarifacao);
-            return View(await xPTOUIMVCContext.ToListAsync());
+        {            
+            return View(_mapper.Map<IEnumerable<ConsultaViewModel>>(await _consultaService.BuscarConsultasDetalhadas()));
         }
 
-        // GET: Consultas/Details/5
         public async Task<IActionResult> Details(Guid? id)
         {
-            if (id == null || _context.ConsultaResponseViewModel == null)
+            if (id == null)
+            {                
+                return NotFound();
+            }
+            
+            var vmConsulta = _mapper.Map<ConsultaViewModel>(await _consultaService.BuscarConsultaDetalhada(c => c.Id == id));
+                
+            if (vmConsulta == null)
             {
                 return NotFound();
             }
 
-            var consultaResponseViewModel = await _context.ConsultaResponseViewModel
-                .Include(c => c.Contrato)
-                .Include(c => c.Fornecedor)
-                .Include(c => c.PlanoTarifacao)
-                .FirstOrDefaultAsync(m => m.Id == id);
-            if (consultaResponseViewModel == null)
-            {
-                return NotFound();
-            }
-
-            return View(consultaResponseViewModel);
+            return View(vmConsulta);
         }
 
-        // GET: Consultas/Create
-        public IActionResult Create()
+        public async Task<IActionResult> Create()
         {
-            ViewData["ContratoId"] = new SelectList(_context.Set<ContratoViewModel>(), "Id", "Id");
-            ViewData["FornecedorId"] = new SelectList(_context.FornecedorResponseViewModel, "Id", "Descricao");
-            ViewData["PlanoTarifacaoId"] = new SelectList(_context.Set<PlanoTarifacaoViewModel>(), "Id", "Id");
+            ViewData["ContratoId"] = new SelectList(await _contratoService.ObterTodos(), "Id", "Id");
+            ViewData["FornecedorId"] = new SelectList(await _fornecedorService.ObterTodos(), "Id", "Descricao");
+            ViewData["PlanoTarifacaoId"] = new SelectList(await _planoTarifacaoService.ObterTodos(), "Id", "Id");
             return View();
         }
 
-        // POST: Consultas/Create
-        // To protect from overposting attacks, enable the specific properties you want to bind to.
-        // For more details, see http://go.microsoft.com/fwlink/?LinkId=317598.
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public async Task<IActionResult> Create([Bind("Id,FornecedorId,PlanoTarifacaoId,ContratoId,Login,Senha")] ConsultaViewModel consultaResponseViewModel)
+        public async Task<IActionResult> Create([Bind("Id,FornecedorId,PlanoTarifacaoId,ContratoId,Login,Senha")] ConsultaViewModel vmConsulta)
         {
             if (ModelState.IsValid)
             {
-                consultaResponseViewModel.Id = Guid.NewGuid();
-                _context.Add(consultaResponseViewModel);
-                await _context.SaveChangesAsync();
+                vmConsulta.Id = Guid.NewGuid();
+                await _consultaService.Adicionar(_mapper.Map<Consulta>(vmConsulta));
                 return RedirectToAction(nameof(Index));
             }
-            ViewData["ContratoId"] = new SelectList(_context.Set<ContratoViewModel>(), "Id", "Id", consultaResponseViewModel.ContratoId);
-            ViewData["FornecedorId"] = new SelectList(_context.FornecedorResponseViewModel, "Id", "Descricao", consultaResponseViewModel.FornecedorId);
-            ViewData["PlanoTarifacaoId"] = new SelectList(_context.Set<PlanoTarifacaoViewModel>(), "Id", "Id", consultaResponseViewModel.PlanoTarifacaoId);
-            return View(consultaResponseViewModel);
+            ViewData["ContratoId"] = new SelectList(await _contratoService.ObterTodos(), "Id", "Id", vmConsulta.ContratoId);
+            ViewData["FornecedorId"] = new SelectList(await _fornecedorService.ObterTodos(), "Id", "Descricao", vmConsulta.FornecedorId);
+            ViewData["PlanoTarifacaoId"] = new SelectList(await _planoTarifacaoService.ObterTodos(), "Id", "Id", vmConsulta.PlanoTarifacaoId);
+            return View(vmConsulta);
         }
 
-        // GET: Consultas/Edit/5
         public async Task<IActionResult> Edit(Guid? id)
         {
-            if (id == null || _context.ConsultaResponseViewModel == null)
+            if (id == null)
             {
                 return NotFound();
             }
 
-            var consultaResponseViewModel = await _context.ConsultaResponseViewModel.FindAsync(id);
-            if (consultaResponseViewModel == null)
+            var vmConsulta = _mapper.Map<ConsultaViewModel>(await _consultaService.ObterPorId(id.Value));
+            if (vmConsulta == null)
             {
                 return NotFound();
             }
-            ViewData["ContratoId"] = new SelectList(_context.Set<ContratoViewModel>(), "Id", "Id", consultaResponseViewModel.ContratoId);
-            ViewData["FornecedorId"] = new SelectList(_context.FornecedorResponseViewModel, "Id", "Descricao", consultaResponseViewModel.FornecedorId);
-            ViewData["PlanoTarifacaoId"] = new SelectList(_context.Set<PlanoTarifacaoViewModel>(), "Id", "Id", consultaResponseViewModel.PlanoTarifacaoId);
-            return View(consultaResponseViewModel);
+            ViewData["ContratoId"] = new SelectList(await _contratoService.ObterTodos(), "Id", "Id", vmConsulta.ContratoId);
+            ViewData["FornecedorId"] = new SelectList(await _fornecedorService.ObterTodos(), "Id", "Descricao", vmConsulta.FornecedorId);
+            ViewData["PlanoTarifacaoId"] = new SelectList(await _planoTarifacaoService.ObterTodos(), "Id", "Id", vmConsulta.PlanoTarifacaoId);
+            return View(vmConsulta);
         }
 
-        // POST: Consultas/Edit/5
-        // To protect from overposting attacks, enable the specific properties you want to bind to.
-        // For more details, see http://go.microsoft.com/fwlink/?LinkId=317598.
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public async Task<IActionResult> Edit(Guid id, [Bind("Id,FornecedorId,PlanoTarifacaoId,ContratoId,Login,Senha")] ConsultaViewModel consultaResponseViewModel)
+        public async Task<IActionResult> Edit(Guid id, [Bind("Id,FornecedorId,PlanoTarifacaoId,ContratoId,Login,Senha")] ConsultaViewModel vmConsulta)
         {
-            if (id != consultaResponseViewModel.Id)
+            if (id != vmConsulta.Id)
             {
                 return NotFound();
             }
 
             if (ModelState.IsValid)
             {
-                try
-                {
-                    _context.Update(consultaResponseViewModel);
-                    await _context.SaveChangesAsync();
-                }
-                catch (DbUpdateConcurrencyException)
-                {
-                    if (!ConsultaResponseViewModelExists(consultaResponseViewModel.Id))
-                    {
-                        return NotFound();
-                    }
-                    else
-                    {
-                        throw;
-                    }
-                }
+                await _consultaService.Atualizar(_mapper.Map<Consulta>(vmConsulta));
                 return RedirectToAction(nameof(Index));
             }
-            ViewData["ContratoId"] = new SelectList(_context.Set<ContratoViewModel>(), "Id", "Id", consultaResponseViewModel.ContratoId);
-            ViewData["FornecedorId"] = new SelectList(_context.FornecedorResponseViewModel, "Id", "Descricao", consultaResponseViewModel.FornecedorId);
-            ViewData["PlanoTarifacaoId"] = new SelectList(_context.Set<PlanoTarifacaoViewModel>(), "Id", "Id", consultaResponseViewModel.PlanoTarifacaoId);
-            return View(consultaResponseViewModel);
+            ViewData["ContratoId"] = new SelectList(await _contratoService.ObterTodos(), "Id", "Id", vmConsulta.ContratoId);
+            ViewData["FornecedorId"] = new SelectList(await _fornecedorService.ObterTodos(), "Id", "Descricao", vmConsulta.FornecedorId);
+            ViewData["PlanoTarifacaoId"] = new SelectList(await _planoTarifacaoService.ObterTodos(), "Id", "Id", vmConsulta.PlanoTarifacaoId);
+            return View(vmConsulta);
         }
 
-        // GET: Consultas/Delete/5
         public async Task<IActionResult> Delete(Guid? id)
         {
-            if (id == null || _context.ConsultaResponseViewModel == null)
+            if (id == null)
             {
                 return NotFound();
             }
 
-            var consultaResponseViewModel = await _context.ConsultaResponseViewModel
-                .Include(c => c.Contrato)
-                .Include(c => c.Fornecedor)
-                .Include(c => c.PlanoTarifacao)
-                .FirstOrDefaultAsync(m => m.Id == id);
-            if (consultaResponseViewModel == null)
+            var vmConsulta = _mapper.Map<ConsultaViewModel>(await _consultaService.BuscarConsultaDetalhada(c => c.Id == id));
+
+            if (vmConsulta == null)
             {
                 return NotFound();
             }
 
-            return View(consultaResponseViewModel);
+            return View(vmConsulta);
         }
 
-        // POST: Consultas/Delete/5
         [HttpPost, ActionName("Delete")]
         [ValidateAntiForgeryToken]
         public async Task<IActionResult> DeleteConfirmed(Guid id)
-        {
-            if (_context.ConsultaResponseViewModel == null)
+        {   
+            if (ConsultaExists(id))
             {
-                return Problem("Entity set 'XPTOUIMVCContext.ConsultaResponseViewModel'  is null.");
-            }
-            var consultaResponseViewModel = await _context.ConsultaResponseViewModel.FindAsync(id);
-            if (consultaResponseViewModel != null)
-            {
-                _context.ConsultaResponseViewModel.Remove(consultaResponseViewModel);
-            }
+                await _consultaService.Remover(id);
+            }           
             
-            await _context.SaveChangesAsync();
             return RedirectToAction(nameof(Index));
         }
 
-        private bool ConsultaResponseViewModelExists(Guid id)
+        private bool ConsultaExists(Guid id)
         {
-          return _context.ConsultaResponseViewModel.Any(e => e.Id == id);
+          return _consultaService.Buscar(e => e.Id == id).Result.Any();
         }
     }
 }

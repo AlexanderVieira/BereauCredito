@@ -1,157 +1,126 @@
-﻿using Microsoft.AspNetCore.Mvc;
-using Microsoft.EntityFrameworkCore;
-using XPTO.UI.MVC.Data;
+﻿using AutoMapper;
+using Microsoft.AspNetCore.Mvc;
+using XPTO.Domain.Entities;
+using XPTO.Domain.Interfaces.Services;
+using XPTO.Domain.Service.Notification;
 using XPTO.UI.MVC.Models;
 
 namespace XPTO.UI.MVC.Controllers
 {
-    public class PlanoTarifacaoController : Controller
+    public class PlanoTarifacaoController : BaseController
     {
-        private readonly XPTOUIMVCContext _context;
+        private readonly IPlanoTarifacaoService _service;
+        private readonly IMapper _mapper;
 
-        public PlanoTarifacaoController(XPTOUIMVCContext context)
+        public PlanoTarifacaoController(IPlanoTarifacaoService service, IMapper mapper, INotificador notificador) : base(notificador)
         {
-            _context = context;
+            _service = service;
+            _mapper = mapper;
         }
 
-        // GET: PlanoTarifacao
         public async Task<IActionResult> Index()
         {
-              return View(await _context.PlanoTarifacaoResponseViewModel.ToListAsync());
+              return View(_mapper.Map<IEnumerable<PlanoTarifacaoViewModel>>(await _service.ObterTodos()));
         }
 
-        // GET: PlanoTarifacao/Details/5
         public async Task<IActionResult> Details(Guid? id)
         {
-            if (id == null || _context.PlanoTarifacaoResponseViewModel == null)
+            if (id == null)
             {
                 return NotFound();
             }
 
-            var planoTarifacaoResponseViewModel = await _context.PlanoTarifacaoResponseViewModel
-                .FirstOrDefaultAsync(m => m.Id == id);
-            if (planoTarifacaoResponseViewModel == null)
+            var vmPlanoTarifacao = _mapper.Map<PlanoTarifacaoViewModel>(await _service.ObterPorId(id.Value));
+            if (vmPlanoTarifacao == null)
             {
                 return NotFound();
             }
 
-            return View(planoTarifacaoResponseViewModel);
+            return View(vmPlanoTarifacao);
         }
 
-        // GET: PlanoTarifacao/Create
         public IActionResult Create()
         {
             return View();
         }
 
-        // POST: PlanoTarifacao/Create
-        // To protect from overposting attacks, enable the specific properties you want to bind to.
-        // For more details, see http://go.microsoft.com/fwlink/?LinkId=317598.
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public async Task<IActionResult> Create([Bind("Id,DataVigencia,Valor")] PlanoTarifacaoViewModel planoTarifacaoResponseViewModel)
+        public async Task<IActionResult> Create(PlanoTarifacaoViewModel vmPlanoTarifacao)
         {
             if (ModelState.IsValid)
             {
-                planoTarifacaoResponseViewModel.Id = Guid.NewGuid();
-                _context.Add(planoTarifacaoResponseViewModel);
-                await _context.SaveChangesAsync();
+                vmPlanoTarifacao.Id = Guid.NewGuid();
+                await _service.Adicionar(_mapper.Map<PlanoTarifacao>(vmPlanoTarifacao));                
                 return RedirectToAction(nameof(Index));
             }
-            return View(planoTarifacaoResponseViewModel);
+            return View(vmPlanoTarifacao);
         }
 
-        // GET: PlanoTarifacao/Edit/5
         public async Task<IActionResult> Edit(Guid? id)
         {
-            if (id == null || _context.PlanoTarifacaoResponseViewModel == null)
+            if (id == null)
             {
                 return NotFound();
             }
 
-            var planoTarifacaoResponseViewModel = await _context.PlanoTarifacaoResponseViewModel.FindAsync(id);
-            if (planoTarifacaoResponseViewModel == null)
+            var vmPlanoTarifacao = _mapper.Map<PlanoTarifacaoViewModel>(await _service.ObterPorId(id.Value));
+            if (vmPlanoTarifacao == null)
             {
                 return NotFound();
             }
-            return View(planoTarifacaoResponseViewModel);
+
+            return View(vmPlanoTarifacao);
         }
 
-        // POST: PlanoTarifacao/Edit/5
-        // To protect from overposting attacks, enable the specific properties you want to bind to.
-        // For more details, see http://go.microsoft.com/fwlink/?LinkId=317598.
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public async Task<IActionResult> Edit(Guid id, [Bind("Id,DataVigencia,Valor")] PlanoTarifacaoViewModel planoTarifacaoResponseViewModel)
+        public async Task<IActionResult> Edit(Guid id, PlanoTarifacaoViewModel vmPlanoTarifacao)
         {
-            if (id != planoTarifacaoResponseViewModel.Id)
+            if (id != vmPlanoTarifacao.Id)
             {
                 return NotFound();
             }
 
             if (ModelState.IsValid)
             {
-                try
-                {
-                    _context.Update(planoTarifacaoResponseViewModel);
-                    await _context.SaveChangesAsync();
-                }
-                catch (DbUpdateConcurrencyException)
-                {
-                    if (!PlanoTarifacaoResponseViewModelExists(planoTarifacaoResponseViewModel.Id))
-                    {
-                        return NotFound();
-                    }
-                    else
-                    {
-                        throw;
-                    }
-                }
+                await _service.Atualizar(_mapper.Map<PlanoTarifacao>(vmPlanoTarifacao));
                 return RedirectToAction(nameof(Index));
             }
-            return View(planoTarifacaoResponseViewModel);
+            return View(vmPlanoTarifacao);
         }
 
-        // GET: PlanoTarifacao/Delete/5
         public async Task<IActionResult> Delete(Guid? id)
         {
-            if (id == null || _context.PlanoTarifacaoResponseViewModel == null)
+            if (id == null)
             {
                 return NotFound();
             }
 
-            var planoTarifacaoResponseViewModel = await _context.PlanoTarifacaoResponseViewModel
-                .FirstOrDefaultAsync(m => m.Id == id);
-            if (planoTarifacaoResponseViewModel == null)
+            var vmPlanoTarifacao = _mapper.Map<PlanoTarifacaoViewModel>(await _service.ObterPorId(id.Value));
+            if (vmPlanoTarifacao == null)
             {
                 return NotFound();
             }
 
-            return View(planoTarifacaoResponseViewModel);
+            return View(vmPlanoTarifacao);
         }
 
-        // POST: PlanoTarifacao/Delete/5
         [HttpPost, ActionName("Delete")]
         [ValidateAntiForgeryToken]
         public async Task<IActionResult> DeleteConfirmed(Guid id)
         {
-            if (_context.PlanoTarifacaoResponseViewModel == null)
+            if (PlanoTarifacaoExists(id))
             {
-                return Problem("Entity set 'XPTOUIMVCContext.PlanoTarifacaoResponseViewModel'  is null.");
-            }
-            var planoTarifacaoResponseViewModel = await _context.PlanoTarifacaoResponseViewModel.FindAsync(id);
-            if (planoTarifacaoResponseViewModel != null)
-            {
-                _context.PlanoTarifacaoResponseViewModel.Remove(planoTarifacaoResponseViewModel);
-            }
+                await _service.Remover(id);
+            }            
             
-            await _context.SaveChangesAsync();
             return RedirectToAction(nameof(Index));
         }
 
-        private bool PlanoTarifacaoResponseViewModelExists(Guid id)
+        private bool PlanoTarifacaoExists(Guid id)
         {
-          return _context.PlanoTarifacaoResponseViewModel.Any(e => e.Id == id);
+            return _service.Buscar(e => e.Id == id).Result.Any();
         }
     }
 }
