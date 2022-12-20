@@ -9,8 +9,11 @@
 </strong>
     <br>
     <strong>ALEXANDER SILVA</strong>
+    <br>
     <strong>PEDRO NOVAES</strong>
+    <br>
     <strong>MARLON BRAGA</strong>
+    <br>
     <strong>BRUNO LIMA</strong>
     <br>
     <strong>ENGENHARIA DE SOFTWARE APLICADA</strong>
