@@ -22,7 +22,6 @@
   </p>
 </p>
 
-_Fonte: [A base de dados pode ser acessada no Kaggle](https://www.kaggle.com/code/anshumoudgil/olist-ecommerce-analytics-quasi-poisson-poly-regs/)_
 ## Índice
 
 - [Índice](#índice)
