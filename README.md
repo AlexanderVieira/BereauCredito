@@ -49,22 +49,42 @@ Consulte a situação do projeto <a href="https://github.com/AlexanderVieira/Ber
 Veja como navegar entre pastas aqui:
 
 ```text
-EcommerceAnalytics/
-├── Code/
-│    └── DataPrep/
-│    └── Model/
-│    │    └── Experiment1/
-│    │    └── Experiment2/
-│    │    └── Final/
-│    └── Operationalization/
-├── Data/
-│     ├── Modeling
-│     └── Processed
-│     └── Raw
-└──Docs/
-    └── Project/
-    └── Model/
-    └── DataReport/    
+BereauCredito/
+├── src/
+│    └── BuildingBlocks/
+│    │         └── XPTO.Core/
+│    │             └── Data/
+│    │             └── DomainObjects/
+│    │             │         └── Exceptions/
+│    │             │         └── ValueObjects/
+│    │             └── Utils/
+│    │
+│    └── Domain/
+│    │     └── XPTO.Domain/
+│    │              └── Enums/
+│    │              └── DomainObjects/
+│    │              │       └── Repositories/
+│    │              │       └── Services/
+│    │              └── Entities/
+│    │                      └── Validations/
+│    └── Service/
+│    │       └── XPTO.Service/
+│    │               └── Notification/
+│    └── Infra/
+│           └── XPTO.Crosscutting/              
+│           │          └── Bereaus/
+│           │            └── Interfaces/
+│           │       
+│           └── XPTO.Data/
+│                  └── Context/    
+│                  └── Mapping/
+│                  └── Migrations/
+│                  └── Repositories/
+│         
+├── scripts/
+│    
+└── docs/
+        
 ```
 
 ## Erros e solicitações de recursos
