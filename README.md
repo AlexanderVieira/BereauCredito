@@ -62,7 +62,7 @@ BereauCredito/
 │    └── Domain/
 │    │     └── XPTO.Domain/
 │    │              └── Enums/
-│    │              └── DomainObjects/
+│    │              └── Interfaces/
 │    │              │       └── Repositories/
 │    │              │       └── Services/
 │    │              └── Entities/
