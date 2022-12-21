@@ -5,9 +5,14 @@
   <h3 align="center">INSTITUTO INFNET</h3>
 
   <p align="center">
-    <strong>PÓS-GRADUAÇÃO MIT ENGENHARIA DE SOFTWARE COM .NET
-</strong>
+    <strong>PÓS-GRADUAÇÃO MIT ENGENHARIA DE SOFTWARE COM .NET</strong>
     <br>
+    <strong>ENGENHARIA DE SOFTWARE APLICADA</strong>
+    <br>
+    <strong>2022</strong>
+  </p>
+    
+  <p align="right">
     <strong>ALEXANDER SILVA</strong>
     <br>
     <strong>PEDRO NOVAES</strong>
@@ -15,12 +20,7 @@
     <strong>MARLON BRAGA</strong>
     <br>
     <strong>BRUNO LIMA</strong>
-    <br>
-    <strong>ENGENHARIA DE SOFTWARE APLICADA</strong>
-    <br>
-    <strong>2022</strong>
   </p>
-</p>
 
 ## Índice
 
